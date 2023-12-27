@@ -1,0 +1,31 @@
+---
+BasedOnStyle:  LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: DontAlign
+AlignOperands:   DontAlign
+AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BreakConstructorInitializers: AfterColon
+ColumnLimit:     0
+ConstructorInitializerIndentWidth: 8
+ContinuationIndentWidth: 8
+Cpp11BracedListStyle: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+IncludeCategories:
+  - Regex:           '".*"'
+    Priority:        1
+  - Regex:           '^<.*\.h>'
+    Priority:        2
+  - Regex:           '^<.*'
+    Priority:        3
+IndentCaseLabels: true
+IndentWidth:     4
+KeepEmptyLinesAtTheStartOfBlocks: false
+SpacesInLineCommentPrefix:
+  Minimum:         0
+  Maximum:         -1
+TabWidth:        4
+UseTab:          Always
+---
+Language:        Cpp
+Standard:        c++17

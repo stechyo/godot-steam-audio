@@ -1,0 +1,4 @@
+[submodule "src/lib/godot-cpp"]
+	path = src/lib/godot-cpp
+	url = https://github.com/stechyo/godot-cpp
+	branch = gdext/steam-audio

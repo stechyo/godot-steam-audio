@@ -1,0 +1,10 @@
+[gd_resource type="SteamAudioMaterial" format=3 uid="uid://b687m7kh5ru1i"]
+
+[resource]
+absorption_low = 0.6
+absorption_mid = 0.7
+absorption_high = 0.8
+scattering = 0.05
+transmission_low = 0.031
+transmission_mid = 0.012
+transmission_high = 0.008

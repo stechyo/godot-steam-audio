@@ -1,0 +1,5 @@
+*.os
+src/lib/steamaudio
+.sconsign.dblite
+project/bin/*.so
+project/bin/*.dll
