@@ -25,7 +25,7 @@ IPLHRTF create_hrtf(IPLContext ctx, IPLAudioSettings audio_cfg) {
 
 IPLAmbisonicsDecodeEffect create_ambisonics_decode_effect(IPLContext ctx, IPLAudioSettings audio_cfg, IPLHRTF hrtf) {
 	IPLAmbisonicsDecodeEffectSettings ambi_dec_cfg;
-	ambi_dec_cfg.maxOrder = 2;
+	ambi_dec_cfg.maxOrder = SteamAudioConfig::max_ambisonics_order;
 	ambi_dec_cfg.hrtf = hrtf;
 	IPLSpeakerLayout layout;
 	layout.type = IPL_SPEAKERLAYOUTTYPE_STEREO;
@@ -41,7 +41,7 @@ IPLAmbisonicsDecodeEffect create_ambisonics_decode_effect(IPLContext ctx, IPLAud
 
 IPLAmbisonicsEncodeEffect create_ambisonics_encode_effect(IPLContext ctx, IPLAudioSettings audio_cfg) {
 	IPLAmbisonicsEncodeEffectSettings ambi_enc_cfg;
-	ambi_enc_cfg.maxOrder = 2;
+	ambi_enc_cfg.maxOrder = SteamAudioConfig::max_ambisonics_order;
 
 	IPLAmbisonicsEncodeEffect ambi_enc_effect;
 	IPLerror err = iplAmbisonicsEncodeEffectCreate(ctx, &audio_cfg, &ambi_enc_cfg, &ambi_enc_effect);
@@ -51,11 +51,19 @@ IPLAmbisonicsEncodeEffect create_ambisonics_encode_effect(IPLContext ctx, IPLAud
 
 IPLSimulator create_simulator(IPLContext ctx, IPLAudioSettings audio_cfg, IPLSceneSettings scene_cfg) {
 	IPLSimulationSettings sim_cfg{};
-	sim_cfg.flags = IPL_SIMULATIONFLAGS_DIRECT;
+	sim_cfg.flags = static_cast<IPLSimulationFlags>(IPL_SIMULATIONFLAGS_DIRECT | IPL_SIMULATIONFLAGS_REFLECTIONS);
 	sim_cfg.sceneType = scene_cfg.type;
-	sim_cfg.maxNumOcclusionSamples = 64;
 	sim_cfg.frameSize = audio_cfg.frameSize;
 	sim_cfg.samplingRate = audio_cfg.samplingRate;
+	// TODO: make configurable
+	sim_cfg.reflectionType = IPL_REFLECTIONEFFECTTYPE_CONVOLUTION;
+	sim_cfg.maxNumOcclusionSamples = SteamAudioConfig::max_num_occ_samples;
+	sim_cfg.maxNumRays = SteamAudioConfig::max_num_refl_rays;
+	sim_cfg.numDiffuseSamples = SteamAudioConfig::num_diffuse_samples;
+	sim_cfg.maxDuration = SteamAudioConfig::max_refl_duration;
+	sim_cfg.maxOrder = SteamAudioConfig::max_ambisonics_order;
+	sim_cfg.maxNumSources = SteamAudioConfig::max_num_refl_srcs;
+	sim_cfg.numThreads = SteamAudioConfig::num_refl_threads;
 
 	IPLSimulator sim;
 	IPLerror err = iplSimulatorCreate(ctx, &sim_cfg, &sim);
@@ -65,12 +73,14 @@ IPLSimulator create_simulator(IPLContext ctx, IPLAudioSettings audio_cfg, IPLSce
 
 IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 	IPLSceneSettings scene_cfg;
-	scene_cfg.type = IPL_SCENETYPE_EMBREE;
-	IPLEmbreeDeviceSettings embree_cfg{};
-	IPLEmbreeDevice embree_dev;
-	IPLerror err = iplEmbreeDeviceCreate(ctx, &embree_cfg, &embree_dev);
-	handleErr(err);
-	scene_cfg.embreeDevice = embree_dev;
+	scene_cfg.type = SteamAudioConfig::scene_type;
+	if (scene_cfg.type == IPL_SCENETYPE_EMBREE) {
+		IPLEmbreeDeviceSettings embree_cfg{};
+		IPLEmbreeDevice embree_dev;
+		IPLerror err = iplEmbreeDeviceCreate(ctx, &embree_cfg, &embree_dev);
+		handleErr(err);
+		scene_cfg.embreeDevice = embree_dev;
+	}
 	return scene_cfg;
 }
 

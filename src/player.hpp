@@ -17,7 +17,9 @@ private:
 	float occlusion_radius = 4.0f;
 	int occlusion_samples = 32;
 	int transmission_rays = 16;
-	float min_attenuation_dist = 5.0f;
+	float min_attenuation_dist = 0.0f;
+	int ambisonics_order = 1;
+	bool loop_sub_stream = false;
 
 protected:
 	static void _bind_methods();
@@ -38,6 +40,10 @@ public:
 	void set_transmission_rays(int p_transmission_rays);
 	float get_min_attenuation_dist();
 	void set_min_attenuation_dist(float p_min_attenuation_dist);
+	int get_ambisonics_order();
+	void set_ambisonics_order(int p_ambisonics_order);
+	bool get_loop_sub_stream();
+	void set_loop_sub_stream(bool p_loop_sub_stream);
 
 	PackedStringArray _get_configuration_warnings() const override;
 };
