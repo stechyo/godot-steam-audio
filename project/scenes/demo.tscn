@@ -1,9 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://bilxmr83dwsgw"]
+[gd_scene load_steps=28 format=3 uid="uid://bilxmr83dwsgw"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_c2adp"]
+[ext_resource type="AudioStream" uid="uid://badsntcuvwx3t" path="res://sound/2.mp3" id="3_0iivb"]
 [ext_resource type="AudioStream" uid="uid://dv4y870s0caeb" path="res://sound/1.mp3" id="3_sy0jh"]
 [ext_resource type="SteamAudioMaterial" uid="uid://bljhgad6g2vnm" path="res://addons/steamaudio/materials/concrete_material.tres" id="5_musns"]
-[ext_resource type="SteamAudioMaterial" uid="uid://oyakg0idhulv" path="res://addons/steamaudio/materials/wood_material.tres" id="6_hlhpg"]
+[ext_resource type="SteamAudioMaterial" uid="uid://cexuij8fef5ay" path="res://addons/steamaudio/materials/carpet_material.tres" id="6_ph4pe"]
+[ext_resource type="SteamAudioMaterial" uid="uid://oyakg0idhulv" path="res://addons/steamaudio/materials/wood_material.tres" id="6_u8h3j"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nkwlr"]
 
@@ -63,6 +65,12 @@ albedo_color = Color(0.272977, 0.142575, 0.0333709, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_g8mi8"]
 material = SubResource("StandardMaterial3D_rrqcc")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gwy3x"]
+albedo_color = Color(0.654902, 0.141176, 0.0352941, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_doeet"]
+material = SubResource("StandardMaterial3D_gwy3x")
+
 [node name="Root" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -74,7 +82,6 @@ environment = SubResource("Environment_gdnyc")
 camera_attributes = SubResource("CameraAttributesPhysical_v0408")
 
 [node name="SteamAudioConfig" type="SteamAudioConfig" parent="."]
-global_log_level = 1
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(200, 0, 0, 0, 200, 0, 0, 0, 200, 0, 0, 0)
@@ -97,6 +104,7 @@ shape = SubResource("CapsuleShape3D_j0ktp")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="SteamAudioListener" type="SteamAudioListener" parent="Player"]
+reflection_duration = 2.0
 
 [node name="Jukebox" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -8)
@@ -108,7 +116,25 @@ mesh = SubResource("BoxMesh_s2rjv")
 shape = SubResource("ConcavePolygonShape3D_5534r")
 
 [node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Jukebox"]
-sub_stream = ExtResource("3_sy0jh")
+sub_stream = ExtResource("3_0iivb")
+loop_sub_stream = true
+min_attenuation_distance = 5.0
+stream = SubResource("SteamAudioStream_vraar")
+autoplay = true
+
+[node name="Jukebox2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.2, 0.5, -11.5)
+mesh = SubResource("BoxMesh_s2rjv")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Jukebox2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Jukebox2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_5534r")
+
+[node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Jukebox2"]
+sub_stream = ExtResource("3_0iivb")
+loop_sub_stream = true
+min_attenuation_distance = 5.0
 stream = SubResource("SteamAudioStream_vraar")
 autoplay = true
 
@@ -139,38 +165,164 @@ shape = SubResource("ConcavePolygonShape3D_dx80d")
 [node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="concrete_wall"]
 material = ExtResource("5_musns")
 
-[node name="wood_wall" type="MeshInstance3D" parent="."]
-transform = Transform3D(9, 0, 0, 0, 3, 0, 0, 0, 1, 0, 1.5, -3)
+[node name="wood_house" type="Node3D" parent="."]
+transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, 4.1, 0, -1.2)
+
+[node name="wood_wall" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(10, 0, 0, 0, 9, 0, 0, 0, 1, 0.6, 3.5, -3)
 mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="wood_wall"]
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_wall/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_dx80d")
 
-[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_wall"]
-material = ExtResource("6_hlhpg")
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall"]
+material = ExtResource("6_u8h3j")
 
-[node name="wood_wall3" type="MeshInstance3D" parent="."]
-transform = Transform3D(9, 0, 0, 0, 3, 0, 0, 0, 1, 0, 1.5, -13)
+[node name="wood_wall3" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(10, 0, 0, 0, 9, 0, 0, 0, 1, 0.6, 3.5, -13)
 mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="wood_wall3"]
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall3"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_wall3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall3/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_dx80d")
 
-[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_wall3"]
-material = ExtResource("6_hlhpg")
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall3"]
+material = ExtResource("6_u8h3j")
 
-[node name="wood_wall2" type="MeshInstance3D" parent="."]
-transform = Transform3D(-3.93403e-07, 0, 1, 0, 3, 0, -9, 0, -4.37114e-08, 4, 1.5, -8)
+[node name="wood_wall5" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(-1.74846e-07, 0, -1, 0, 9, 0, 4, 0, -4.37114e-08, -4, 3.5, -10.5)
 mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="wood_wall2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall5"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_wall2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall5/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_dx80d")
 
-[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_wall2"]
-material = ExtResource("6_hlhpg")
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall5"]
+material = ExtResource("6_u8h3j")
+
+[node name="wood_wall6" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(-1.31134e-07, 0, -1, 0, 9, 0, 3, 0, -4.37114e-08, -4, 3.5, -5)
+mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall6"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall6/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall6"]
+material = ExtResource("6_u8h3j")
+
+[node name="wood_wall4" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(10, 0, 0, 0, -3.93403e-07, -1, 0, 9, -4.37114e-08, 1, 8.5, -8)
+mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall4/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall4"]
+material = ExtResource("6_u8h3j")
+
+[node name="wood_wall2" type="MeshInstance3D" parent="wood_house"]
+transform = Transform3D(-3.93403e-07, 0, 1, 0, 8, 0, -9, 0, -4.37114e-08, 6, 4, -8)
+mesh = SubResource("BoxMesh_g8mi8")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="wood_house/wood_wall2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wood_house/wood_wall2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="wood_house/wood_wall2"]
+material = ExtResource("6_u8h3j")
+
+[node name="carpet_house" type="Node3D" parent="."]
+transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -11.6, 0, -16.8)
+
+[node name="wood_wall" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(10, 0, 0, 0, 9, 0, 0, 0, 1, 0.6, 3.5, -3)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall"]
+material = ExtResource("6_ph4pe")
+
+[node name="wood_wall3" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(10, 0, 0, 0, 9, 0, 0, 0, 1, 0.6, 3.5, -13)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall3"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall3/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall3"]
+material = ExtResource("6_ph4pe")
+
+[node name="wood_wall5" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(-1.74846e-07, 0, -1, 0, 9, 0, 4, 0, -4.37114e-08, -4, 3.5, -10.5)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall5"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall5/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall5"]
+material = ExtResource("6_ph4pe")
+
+[node name="wood_wall6" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(-1.31134e-07, 0, -1, 0, 9, 0, 3, 0, -4.37114e-08, -4, 3.5, -5)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall6"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall6/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall6"]
+material = ExtResource("6_ph4pe")
+
+[node name="wood_wall4" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(10, 0, 0, 0, -3.93403e-07, -1, 0, 9, -4.37114e-08, 1, 8.5, -8)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall4/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall4"]
+material = ExtResource("6_ph4pe")
+
+[node name="wood_wall2" type="MeshInstance3D" parent="carpet_house"]
+transform = Transform3D(-3.93403e-07, 0, 1, 0, 8, 0, -9, 0, -4.37114e-08, 6, 4, -8)
+mesh = SubResource("BoxMesh_doeet")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="carpet_house/wood_wall2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="carpet_house/wood_wall2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_dx80d")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="carpet_house/wood_wall2"]
+material = ExtResource("6_ph4pe")

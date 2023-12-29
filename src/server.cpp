@@ -1,7 +1,9 @@
 #include "server.hpp"
+#include "config.hpp"
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/project_settings.hpp"
 #include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/variant/callable_method_pointer.hpp"
 #include "phonon.h"
 #include "server_init.hpp"
 #include "steam_audio.hpp"
@@ -9,29 +11,27 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 void SteamAudioServer::tick() {
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
 	if (!self->is_global_state_init.load()) {
 		return;
 	}
-
 	if (self->listener == nullptr) {
 		return;
 	}
 
-	if (Engine::get_singleton()->is_editor_hint()) {
-		return;
-	}
 	SteamAudio::log(SteamAudio::log_debug, "tick");
 
-	iplSceneCommit(self->global_state.scene);
-	iplSimulatorSetScene(self->global_state.sim, self->global_state.scene);
-	iplSimulatorCommit(self->global_state.sim);
+	if (!is_refl_thread_processing.load()) {
+		iplSceneCommit(self->global_state.scene);
+	}
 
 	SteamAudio::log(SteamAudio::log_debug, "tick: committed scene");
 
 	self->global_state.listener_coords =
 			ipl_coords_from(self->listener->get_global_transform());
 
-	SteamAudio::log(SteamAudio::log_debug, "tick: committed scene");
 	for (auto ls : self->local_states) {
 		if (ls->src.player == nullptr) {
 			UtilityFunctions::push_warning(
@@ -69,10 +69,10 @@ void SteamAudioServer::tick() {
 	}
 	SteamAudio::log(SteamAudio::log_debug, "tick: direct inputs set");
 
-	IPLSimulationSharedInputs sharedInputs{};
-	sharedInputs.listener = self->global_state.listener_coords;
+	IPLSimulationSharedInputs shared_inputs{};
+	shared_inputs.listener = self->global_state.listener_coords;
 	iplSimulatorSetSharedInputs(self->global_state.sim,
-			IPL_SIMULATIONFLAGS_DIRECT, &sharedInputs);
+			IPL_SIMULATIONFLAGS_DIRECT, &shared_inputs);
 	iplSimulatorRunDirect(self->global_state.sim);
 
 	SteamAudio::log(SteamAudio::log_debug, "tick: direct sim complete");
@@ -82,44 +82,115 @@ void SteamAudioServer::tick() {
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_DIRECT, &outputs);
 		ls->direct_outputs = outputs.direct;
 	}
+
+	if (is_refl_thread_processing.load()) {
+		SteamAudio::log(SteamAudio::log_debug, "tick: done, skipping reflections");
+		return;
+	}
+
+	global_state.refl_ir_lock.lock();
+	for (auto ls : local_states) {
+		IPLSimulationOutputs outputs;
+		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &outputs);
+		ls->refl_outputs = outputs.reflections;
+	}
+	global_state.refl_ir_lock.unlock();
+
+	for (auto ls : self->local_states) {
+		Vector3 src_pos = ls->src.player->get_global_position();
+		IPLCoordinateSpace3 src_coords;
+		src_coords.ahead = IPLVector3{};
+		src_coords.up = IPLVector3{};
+		src_coords.right = IPLVector3{};
+		src_coords.origin = ipl_vec3_from(src_pos);
+
+		IPLSimulationInputs inputs{};
+		inputs.flags = IPL_SIMULATIONFLAGS_REFLECTIONS;
+		inputs.source = src_coords;
+
+		iplSourceSetInputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &inputs);
+	}
+
+	shared_inputs = IPLSimulationSharedInputs{};
+	shared_inputs.listener = global_state.listener_coords;
+	shared_inputs.numRays = listener->get_num_refl_rays();
+	shared_inputs.numBounces = listener->get_num_refl_bounces();
+	shared_inputs.duration = listener->get_refl_duration();
+	shared_inputs.order = listener->get_refl_ambisonics_order();
+	shared_inputs.irradianceMinDistance = listener->get_irradiance_min_dist();
+	iplSimulatorSetSharedInputs(global_state.sim, IPL_SIMULATIONFLAGS_REFLECTIONS, &shared_inputs);
+
+	{
+		// notify reflection thread and tell it it can start running again
+		std::unique_lock<std::mutex> lock(refl_mux);
+		is_refl_thread_processing.store(true);
+		cv.notify_one();
+	}
+
 	SteamAudio::log(SteamAudio::log_debug, "tick: done");
 }
 
-GlobalSteamAudioState *SteamAudioServer::get_global_state() {
+void SteamAudioServer::init_scene(IPLSceneSettings *scene_cfg) {
+	SteamAudio::log(SteamAudio::log_info, "Initializing SteamAudioServer scene");
+	IPLerror err = iplSceneCreate(global_state.ctx, scene_cfg, &global_state.scene);
+	handleErr(err);
+	global_state.scene = iplSceneRetain(global_state.scene);
+}
+
+GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	self->init_mux.lock();
 	if (self->is_global_state_init.load()) {
 		self->init_mux.unlock();
 		return &self->global_state;
 	}
 
+	if (!should_init) {
+		self->init_mux.unlock();
+		return nullptr;
+	}
+
 	SteamAudio::log(SteamAudio::log_info, "Initializing SteamAudioServer global state");
 
-	self->global_state.audio_cfg = create_audio_cfg();
-	self->global_state.ctx = create_ctx();
+	global_state.audio_cfg = create_audio_cfg();
+	global_state.ctx = create_ctx();
 
-	IPLSceneSettings scene_cfg = create_scene_cfg(self->global_state.ctx);
+	IPLSceneSettings scene_cfg = create_scene_cfg(global_state.ctx);
+	init_scene(&scene_cfg);
 
-	IPLerror err = iplSceneCreate(self->global_state.ctx, &scene_cfg, &self->global_state.scene);
-	handleErr(err);
+	global_state.sim = create_simulator(
+			global_state.ctx, global_state.audio_cfg, scene_cfg);
+	global_state.hrtf = create_hrtf(global_state.ctx, global_state.audio_cfg);
+	global_state.ambi_enc_effect = create_ambisonics_encode_effect(
+			global_state.ctx, global_state.audio_cfg);
+	global_state.ambi_dec_effect = create_ambisonics_decode_effect(
+			global_state.ctx, global_state.audio_cfg, global_state.hrtf);
 
-	self->global_state.sim = create_simulator(
-			self->global_state.ctx, self->global_state.audio_cfg, scene_cfg);
-	self->global_state.hrtf = create_hrtf(self->global_state.ctx, self->global_state.audio_cfg);
-	self->global_state.ambi_enc_effect = create_ambisonics_encode_effect(
-			self->global_state.ctx, self->global_state.audio_cfg);
-	self->global_state.ambi_dec_effect = create_ambisonics_decode_effect(
-			self->global_state.ctx, self->global_state.audio_cfg, self->global_state.hrtf);
+	SteamAudio::log(SteamAudio::log_info, "Setting SteamAudio simulator scene");
+	iplSimulatorSetScene(global_state.sim, global_state.scene);
+	iplSimulatorCommit(global_state.sim);
 
-	SteamAudio::log(SteamAudio::log_debug, "setting scene");
-	// HACK: this print makes iplSimulatorSetScene not crash. Don't ask.
-	std::cout << self->global_state.scene << std::endl;
-	iplSimulatorSetScene(self->global_state.sim, self->global_state.scene);
-	iplSimulatorCommit(self->global_state.sim);
+	is_global_state_init.store(true);
+	init_mux.unlock();
 
-	SteamAudio::log(SteamAudio::log_debug, "init global state done");
-	self->is_global_state_init.store(true);
-	self->init_mux.unlock();
-	return &self->global_state;
+	SteamAudio::log(SteamAudio::log_info, "Initialized SteamAudioServer global state");
+	start_refl_sim();
+	return &global_state;
+}
+
+void SteamAudioServer::start_refl_sim() {
+	refl_thread.start(callable_mp(this, &SteamAudioServer::run_refl_sim));
+}
+
+void SteamAudioServer::run_refl_sim() {
+	while (this->is_running.load()) {
+		{
+			std::unique_lock<std::mutex> lock(this->refl_mux);
+			cv.wait(lock, [&] { return is_refl_thread_processing.load() || !is_running.load(); });
+		}
+		SteamAudio::log(SteamAudio::log_debug, "running reflection sim");
+		iplSimulatorRunReflections(global_state.sim);
+		is_refl_thread_processing.store(false);
+	}
 }
 
 void SteamAudioServer::add_listener(SteamAudioListener *lis) {
@@ -140,10 +211,15 @@ void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
 
 SteamAudioServer::SteamAudioServer() {
 	self = this;
-	self->is_global_state_init.store(false);
+	is_global_state_init.store(false);
+	is_refl_thread_processing.store(false);
+	is_running.store(true);
 }
 
 SteamAudioServer::~SteamAudioServer() {
+	is_running.store(false);
+	refl_thread.wait_to_finish();
+
 	if (!self->is_global_state_init.load()) {
 		return;
 	}

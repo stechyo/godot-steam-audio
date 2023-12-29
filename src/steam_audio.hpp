@@ -5,6 +5,7 @@
 #include <phonon.h>
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <mutex>
 
 using namespace godot;
 
@@ -29,6 +30,7 @@ struct GlobalSteamAudioState {
 	IPLSimulationSettings sim_cfg;
 	IPLSimulator sim;
 	IPLCoordinateSpace3 listener_coords;
+	std::mutex refl_ir_lock;
 };
 
 struct SteamAudioSource {
@@ -41,15 +43,23 @@ struct SteamAudioSourceConfig {
 	int occ_samples;
 	int transm_rays;
 	float min_attn_dist;
+	int ambisonics_order;
 };
 
 struct SteamAudioEffects {
 	IPLDirectEffect direct;
+	IPLReflectionEffect refl;
+	IPLAmbisonicsDecodeEffect dec;
+	IPLAmbisonicsDecodeEffect refl_dec;
+	IPLAmbisonicsEncodeEffect enc;
 };
 
 struct LocalSteamAudioBuffers {
 	IPLAudioBuffer in;
 	IPLAudioBuffer direct;
+	IPLAudioBuffer mono;
+	IPLAudioBuffer refl_ambi;
+	IPLAudioBuffer refl_out;
 	IPLAudioBuffer ambi;
 	IPLAudioBuffer out;
 };
@@ -58,10 +68,15 @@ struct LocalSteamAudioState {
 	SteamAudioSource src;
 	Vector3 dir_to_listener;
 	IPLDirectEffectParams direct_outputs{ {} };
+	IPLReflectionEffectParams refl_outputs{ {} };
 	LocalSteamAudioBuffers bufs;
 	SteamAudioEffects fx;
 	SteamAudioSourceConfig cfg;
 };
+
+inline int ambisonic_channels_from(int order) {
+	return (order + 1) * (order + 1);
+}
 
 inline IPLVector3 ipl_vec3_from(Vector3 v) { return IPLVector3{ v.x, v.y, v.z }; }
 
