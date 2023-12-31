@@ -23,7 +23,7 @@ are currently working. Mac probably works, but I don't have the time nor the mon
  - Download the [latest release](https://github.com/stechyo/godot-steam-audio/releases/latest) of the extension or build it yourself.
  - Download the [latest supported release](https://github.com/ValveSoftware/steam-audio/releases/tag/v4.5.0) of steam-audio, and copy the binaries 
    that you find in the `lib` folder for your operating system to the `bin/` folder of your project, which 
-   should contain a `libgodot-steam-audio` library (.dll or .so) and a .gdextension file.
+   should contain a `libgodot-steam-audio` library (.dll or .so) and a .gdextension file. Note that, since your OS is likely 64-bit, you'll want the x64 version (e.g. `windows-x64`).
 
 Your project should have a `bin/` folder with:
  - `libgodot-steam-audio.gdextension`
