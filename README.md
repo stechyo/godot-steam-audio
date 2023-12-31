@@ -50,8 +50,13 @@ Check the Makefile for an example install.
 
 ### Acknowledgements
 godot-steam-audio uses the Steam® Audio SDK. Steam® is a trademark or registered trademark of Valve
-Corporation in the United States of America and elsewhere.  
+Corporation in the United States of America and elsewhere.
+Steam® Audio, Copyright 2017 – present, Valve Corp. All rights reserved.
 
 Vespergamedev's [GDNative module](https://github.com/vespergamedev/godot_steamaudio) was helpful in figuring
 out how to use the steam-audio lib.
 
+The icons for the SteamAudio nodes are from Godot, I just changed their color to match one of the colors in
+the Steam Deck OLED page (going for a Steam blue would be more obvious, but that makes them look like 2D
+nodes.) As far as I can tell these are MIT-licensed, so they are Copyright (c) 2014-present Godot Engine
+contributors.

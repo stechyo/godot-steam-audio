@@ -4,21 +4,28 @@
 
 #include "godot_cpp/classes/audio_stream.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
+#include "steam_audio.hpp"
 #include <phonon.h>
-#include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/classes/audio_stream_player3d.hpp>
 
 using namespace godot;
 
-class SteamAudioPlayer : public AudioStreamPlayer {
-	GDCLASS(SteamAudioPlayer, AudioStreamPlayer);
+class SteamAudioPlayer : public AudioStreamPlayer3D {
+	GDCLASS(SteamAudioPlayer, AudioStreamPlayer3D);
 
 private:
 	Ref<AudioStream> sub_stream;
-	float occlusion_radius = 4.0f;
-	int occlusion_samples = 32;
-	int transmission_rays = 16;
-	float min_attenuation_dist = 0.0f;
-	int ambisonics_order = 1;
+	SteamAudioSourceConfig cfg{
+		4.0f,
+		32,
+		16,
+		0.0f,
+		1,
+		true,
+		true,
+		true,
+		false
+	};
 	bool loop_sub_stream = false;
 
 protected:
@@ -28,6 +35,7 @@ public:
 	SteamAudioPlayer();
 	~SteamAudioPlayer();
 	void _ready() override;
+	void _process(double delta) override;
 
 	Ref<AudioStream> get_sub_stream();
 	void set_sub_stream(Ref<AudioStream> p_sub_stream);
@@ -42,8 +50,18 @@ public:
 	void set_min_attenuation_dist(float p_min_attenuation_dist);
 	int get_ambisonics_order();
 	void set_ambisonics_order(int p_ambisonics_order);
+
 	bool get_loop_sub_stream();
 	void set_loop_sub_stream(bool p_loop_sub_stream);
+
+	bool is_dist_attn_on();
+	void set_dist_attn_on(bool p_dist_attn_on);
+	bool is_ambisonics_on();
+	void set_ambisonics_on(bool p_ambisonics_on);
+	bool is_reflection_on();
+	void set_reflection_on(bool p_reflection_on);
+	bool is_occlusion_on();
+	void set_occlusion_on(bool p_occlusion_on);
 
 	PackedStringArray _get_configuration_warnings() const override;
 };
