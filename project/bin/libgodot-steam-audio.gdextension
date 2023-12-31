@@ -13,3 +13,10 @@ windows.x86_64.debug = "res://bin/libgodot-steam-audio.windows.template_debug.x8
 windows.x86_64.release = "res://bin/libgodot-steam-audio.windows.template_release.x86_64.dll"
 macos.debug = "res://bin/libgodot-steam-audio.macos.template_debug.framework"
 macos.release = "res://bin/libgodot-steam-audio.macos.template_release.framework"
+
+[icons]
+
+SteamAudioPlayer = "res://addons/steamaudio/icons/steam_audio_player.svg"
+SteamAudioListener = "res://addons/steamaudio/icons/steam_audio_listener.svg"
+SteamAudioConfig = "res://addons/steamaudio/icons/steam_audio_config.svg"
+SteamAudioGeometry = "res://addons/steamaudio/icons/steam_audio_geometry.svg"

@@ -78,33 +78,45 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 		local_state.bufs.in.data[1][i] = mixed_frames[i].y;
 	}
 
-	local_state.direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
-			IPL_DIRECTEFFECTFLAGS_APPLYOCCLUSION |
-			IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION |
-			IPL_DIRECTEFFECTFLAGS_APPLYTRANSMISSION);
+	if (local_state.cfg.is_dist_attn_on) {
+		local_state.direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
+				local_state.direct_outputs.flags |
+				IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION);
+	}
+	if (local_state.cfg.is_occlusion_on) {
+		local_state.direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
+				local_state.direct_outputs.flags |
+				IPL_DIRECTEFFECTFLAGS_APPLYOCCLUSION |
+				IPL_DIRECTEFFECTFLAGS_APPLYTRANSMISSION);
+	}
 	iplDirectEffectApply(
 			local_state.fx.direct, &local_state.direct_outputs,
 			&local_state.bufs.in, &local_state.bufs.direct);
-
-	IPLAmbisonicsEncodeEffectParams enc_params{};
-	enc_params.direction = ipl_vec3_from(local_state.dir_to_listener);
-	enc_params.order = local_state.cfg.ambisonics_order;
-	iplAmbisonicsEncodeEffectApply(
-			local_state.fx.enc, &enc_params,
-			&local_state.bufs.direct, &local_state.bufs.ambi);
 
 	IPLAmbisonicsDecodeEffectParams dec_params{};
 	dec_params.orientation = gs->listener_coords;
 	dec_params.order = local_state.cfg.ambisonics_order;
 	dec_params.hrtf = gs->hrtf;
 	dec_params.binaural = IPL_TRUE;
-	iplAmbisonicsDecodeEffectApply(
-			local_state.fx.dec, &dec_params,
-			&local_state.bufs.ambi, &local_state.bufs.out);
-	SteamAudio::log(SteamAudio::log_debug, "mixing: finished ambisonics");
+
+	if (local_state.cfg.is_ambisonics_on) {
+		IPLAmbisonicsEncodeEffectParams enc_params{};
+		enc_params.direction = ipl_vec3_from(local_state.dir_to_listener);
+		enc_params.order = local_state.cfg.ambisonics_order;
+		iplAmbisonicsEncodeEffectApply(
+				local_state.fx.enc, &enc_params,
+				&local_state.bufs.direct, &local_state.bufs.ambi);
+
+		iplAmbisonicsDecodeEffectApply(
+				local_state.fx.dec, &dec_params,
+				&local_state.bufs.ambi, &local_state.bufs.out);
+		SteamAudio::log(SteamAudio::log_debug, "mixing: finished ambisonics");
+	} else {
+		iplAudioBufferMix(gs->ctx, &local_state.bufs.direct, &local_state.bufs.out);
+	}
 
 	gs->refl_ir_lock.lock();
-	if (local_state.refl_outputs.ir != nullptr) {
+	if (local_state.refl_outputs.ir != nullptr && local_state.cfg.is_reflection_on) {
 		iplAudioBufferDownmix(gs->ctx, &local_state.bufs.direct, &local_state.bufs.mono);
 		local_state.refl_outputs.numChannels = ambisonic_channels_from(local_state.cfg.ambisonics_order);
 		local_state.refl_outputs.type = IPL_REFLECTIONEFFECTTYPE_CONVOLUTION;
