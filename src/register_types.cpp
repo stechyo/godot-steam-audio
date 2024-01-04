@@ -31,8 +31,8 @@ void init_ext(ModuleInitializationLevel p_level) {
 	}
 
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
-		auto sa = memnew(SteamAudioServer);
 		GDREGISTER_CLASS(SteamAudioServer);
+		auto sa = memnew(SteamAudioServer);
 	}
 }
 
