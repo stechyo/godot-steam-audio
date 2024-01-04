@@ -1,6 +1,7 @@
 #ifndef STEAM_AUDIO_STREAM_H
 #define STEAM_AUDIO_STREAM_H
 
+#include "godot_cpp/classes/audio_stream_player3d.hpp"
 #include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "steam_audio.hpp"
@@ -48,7 +49,7 @@ public:
 	SteamAudioStreamPlayback();
 	~SteamAudioStreamPlayback();
 
-	void set_parent(Node3D *node);
+	void set_parent(AudioStreamPlayer3D *node);
 	void set_cfg(SteamAudioSourceConfig cfg);
 
 	virtual int32_t _mix(AudioFrame *buffer, double rate_scale,

@@ -146,7 +146,7 @@ void SteamAudioStreamPlayback::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_parent", "node"), &SteamAudioStreamPlayback::set_parent);
 }
 
-void SteamAudioStreamPlayback::set_parent(Node3D *node) {
+void SteamAudioStreamPlayback::set_parent(AudioStreamPlayer3D *node) {
 	this->local_state.src.player = node;
 }
 

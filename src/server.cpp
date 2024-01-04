@@ -38,6 +38,10 @@ void SteamAudioServer::tick() {
 					"local state has empty player, not updating simulation state");
 		}
 
+		if (!ls->src.player->is_playing()) {
+			continue; // it's pointless to simulate streams that aren't active
+		}
+
 		Vector3 src_pos = ls->src.player->get_global_position();
 		ls->dir_to_listener = src_pos - self->listener->get_global_position();
 
