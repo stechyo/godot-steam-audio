@@ -3,6 +3,8 @@
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/core/object.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
+#include "server.hpp"
+#include "server_init.hpp"
 #include "stream.hpp"
 
 void SteamAudioPlayer::_bind_methods() {
@@ -50,8 +52,93 @@ void SteamAudioPlayer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "reflection"), "set_reflection_on", "is_reflection_on");
 }
 
-SteamAudioPlayer::SteamAudioPlayer() {}
-SteamAudioPlayer::~SteamAudioPlayer() {}
+SteamAudioPlayer::SteamAudioPlayer() {
+	is_local_state_init.store(false);
+	can_load_local_state.store(true);
+}
+SteamAudioPlayer::~SteamAudioPlayer() {
+	SteamAudio::log(SteamAudio::log_debug, "destroying player");
+	if (!is_local_state_init.load()) {
+		return;
+	}
+
+	std::unique_lock lock(local_state.mux);
+
+	is_local_state_init.store(false);
+	can_load_local_state.store(false);
+	SteamAudioServer::get_singleton()->remove_local_state(&local_state);
+
+	is_local_state_init.store(false);
+	auto gs = SteamAudioServer::get_singleton()->get_global_state();
+
+	iplSourceRemove(local_state.src.src, gs->sim);
+	iplSourceRelease(&local_state.src.src);
+	iplDirectEffectRelease(&local_state.fx.direct);
+
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.in);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.direct);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.ambi);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.out);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.mono);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_ambi);
+	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_out);
+}
+
+LocalSteamAudioState *SteamAudioPlayer::get_local_state() {
+	if (!can_load_local_state.load()) {
+		return nullptr;
+	}
+	if (!is_local_state_init.load()) {
+		init_local_state();
+	}
+	return &local_state;
+}
+
+void SteamAudioPlayer::init_local_state() {
+	SteamAudio::log(SteamAudio::log_debug, "init local state");
+	auto gs = SteamAudioServer::get_singleton()->get_global_state();
+	local_state.cfg = cfg;
+
+	IPLSourceSettings src_cfg{};
+	src_cfg.flags = static_cast<IPLSimulationFlags>(IPL_SIMULATIONFLAGS_DIRECT | IPL_SIMULATIONFLAGS_REFLECTIONS);
+	iplSourceCreate(gs->sim, &src_cfg, &local_state.src.src);
+	iplSourceAdd(local_state.src.src, gs->sim);
+	iplSimulatorCommit(gs->sim);
+
+	// TODO: check if we can't create effects globally and use their Reset functions.
+	// If we create these globally and use them for all sources, then strange things happen
+	// (e.g. one source may start to play audio from all sources and positioning gets screwed)
+	IPLDirectEffectSettings dir_effect_cfg;
+	dir_effect_cfg.numChannels = 2;
+	iplDirectEffectCreate(gs->ctx, &gs->audio_cfg, &dir_effect_cfg, &local_state.fx.direct);
+
+	IPLReflectionEffectSettings refl_effect_cfg{};
+	refl_effect_cfg.type = IPL_REFLECTIONEFFECTTYPE_CONVOLUTION;
+	refl_effect_cfg.irSize = int(SteamAudioConfig::max_refl_duration * float(gs->audio_cfg.samplingRate));
+	refl_effect_cfg.numChannels = ambisonic_channels_from(local_state.cfg.ambisonics_order);
+	iplReflectionEffectCreate(gs->ctx, &gs->audio_cfg, &refl_effect_cfg, &local_state.fx.refl);
+
+	local_state.fx.dec = create_ambisonics_decode_effect(
+			gs->ctx, gs->audio_cfg, gs->hrtf);
+	local_state.fx.refl_dec = create_ambisonics_decode_effect(
+			gs->ctx, gs->audio_cfg, gs->hrtf);
+	local_state.fx.enc = create_ambisonics_encode_effect(
+			gs->ctx, gs->audio_cfg);
+
+	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.in);
+	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.direct);
+	iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.ambi);
+	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.out);
+	iplAudioBufferAllocate(gs->ctx, 1, gs->audio_cfg.frameSize, &local_state.bufs.mono);
+	iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.refl_ambi);
+	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.refl_out);
+	local_state.src.player = this;
+
+	SteamAudio::log(SteamAudio::log_debug, "init local state done");
+
+	SteamAudioServer::get_singleton()->add_local_state(&this->local_state);
+	is_local_state_init.store(true);
+}
 
 void SteamAudioPlayer::_ready() {
 	set_panning_strength(0.0f);
@@ -65,8 +152,8 @@ void SteamAudioPlayer::_ready() {
 		sub_stream->set("loop", true);
 	}
 
-	auto pb = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
-	if (pb == nullptr) {
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
 		UtilityFunctions::push_error(" \
 			The stream of a SteamAudioPlayer must be a \
 			SteamAudioStream. No sound will be played.");
@@ -79,9 +166,17 @@ void SteamAudioPlayer::_ready() {
 		cfg.occ_samples = SteamAudioConfig::max_num_occ_samples;
 	}
 
-	pb->set_parent(this);
-	pb->set_cfg(cfg);
-	pb->play_stream(sub_stream, 0.0f, float(get_volume_db()), float(get_pitch_scale()));
+	str->set_stream(sub_stream);
+	str->parent = this;
+
+	// TODO: do this properly, if it can be done
+	// The stream might be actually instantiated before Player::_ready().
+	// If so, transfer the necessary data directly to it.
+	if (this->is_playing() && !get_stream_playback().is_null()) {
+		auto pb = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
+		pb->parent = this;
+		pb->set_stream(sub_stream);
+	}
 }
 
 void SteamAudioPlayer::_process(double delta) {
@@ -122,8 +217,5 @@ void SteamAudioPlayer::set_occlusion_on(bool p_occlusion_on) { cfg.is_occlusion_
 
 PackedStringArray SteamAudioPlayer::_get_configuration_warnings() const {
 	PackedStringArray res;
-	if (sub_stream == nullptr) {
-		res.push_back("Sub stream must be set, otherwise no audio will play.");
-	}
 	return res;
 }

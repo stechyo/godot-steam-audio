@@ -34,7 +34,7 @@ struct GlobalSteamAudioState {
 };
 
 struct SteamAudioSource {
-	Node3D *player;
+	Node3D *player = nullptr;
 	IPLSource src;
 };
 
@@ -76,6 +76,7 @@ struct LocalSteamAudioState {
 	LocalSteamAudioBuffers bufs;
 	SteamAudioEffects fx;
 	SteamAudioSourceConfig cfg;
+	std::mutex mux;
 };
 
 inline int ambisonic_channels_from(int order) {

@@ -30,7 +30,7 @@ public:
 	static float max_refl_duration;
 	static int max_num_refl_srcs;
 	static int num_refl_threads;
-	static IPLSceneType scene_type; // TODO: support more types
+	static IPLSceneType scene_type;
 
 	SteamAudioConfig();
 	~SteamAudioConfig();
