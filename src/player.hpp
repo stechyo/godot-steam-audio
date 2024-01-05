@@ -7,6 +7,7 @@
 #include "steam_audio.hpp"
 #include <phonon.h>
 #include <godot_cpp/classes/audio_stream_player3d.hpp>
+#include <optional>
 
 using namespace godot;
 
@@ -15,6 +16,8 @@ class SteamAudioPlayer : public AudioStreamPlayer3D {
 
 private:
 	Ref<AudioStream> sub_stream;
+	// TODO: we can probably move these values inside local state
+	// for cleanup and the ability to adjust them at runtime
 	SteamAudioSourceConfig cfg{
 		4.0f,
 		32,
@@ -28,6 +31,12 @@ private:
 	};
 	bool loop_sub_stream = false;
 
+	LocalSteamAudioState local_state;
+	std::atomic<bool> is_local_state_init;
+	std::atomic<bool> can_load_local_state;
+
+	void init_local_state();
+
 protected:
 	static void _bind_methods();
 
@@ -39,6 +48,7 @@ public:
 
 	Ref<AudioStream> get_sub_stream();
 	void set_sub_stream(Ref<AudioStream> p_sub_stream);
+	LocalSteamAudioState *get_local_state();
 
 	float get_occlusion_radius();
 	void set_occlusion_radius(float p_occlusion_radius);

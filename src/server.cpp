@@ -187,6 +187,14 @@ void SteamAudioServer::run_refl_sim() {
 			std::unique_lock<std::mutex> lock(this->refl_mux);
 			cv.wait(lock, [&] { return is_refl_thread_processing.load() || !is_running.load(); });
 		}
+		// if someone removed a local state, then the reflection sim might crash, so
+		// we need it to wait for another tick.
+		// XXX: what happens if a local state is removed in the middle of a sim run...?
+		if (local_states_have_changed.load()) {
+			local_states_have_changed.store(false);
+			is_refl_thread_processing.store(false);
+			return;
+		}
 		SteamAudio::log(SteamAudio::log_debug, "running reflection sim");
 		iplSimulatorRunReflections(global_state.sim);
 		is_refl_thread_processing.store(false);
@@ -207,6 +215,7 @@ void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
 		return;
 	}
 	local_states.erase(it);
+	local_states_have_changed.store(true);
 }
 
 SteamAudioServer::SteamAudioServer() {
@@ -214,6 +223,7 @@ SteamAudioServer::SteamAudioServer() {
 	is_global_state_init.store(false);
 	is_refl_thread_processing.store(false);
 	is_running.store(true);
+	local_states_have_changed.store(false);
 }
 
 SteamAudioServer::~SteamAudioServer() {

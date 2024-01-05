@@ -1,0 +1,156 @@
+[gd_scene load_steps=15 format=3 uid="uid://6sgtpvtg5aic"]
+
+[ext_resource type="SteamAudioMaterial" uid="uid://oyakg0idhulv" path="res://addons/steamaudio/materials/wood_material.tres" id="2_lm25q"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xa5je"]
+albedo_color = Color(0.203922, 0.0901961, 0, 1)
+metallic_specular = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_1ds6j"]
+material = SubResource("StandardMaterial3D_xa5je")
+size = Vector3(4, 3, 0.5)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_fpg8h"]
+data = PackedVector3Array(-2, 1.5, 0.25, 2, 1.5, 0.25, -2, -1.5, 0.25, 2, 1.5, 0.25, 2, -1.5, 0.25, -2, -1.5, 0.25, 2, 1.5, -0.25, -2, 1.5, -0.25, 2, -1.5, -0.25, -2, 1.5, -0.25, -2, -1.5, -0.25, 2, -1.5, -0.25, 2, 1.5, 0.25, 2, 1.5, -0.25, 2, -1.5, 0.25, 2, 1.5, -0.25, 2, -1.5, -0.25, 2, -1.5, 0.25, -2, 1.5, -0.25, -2, 1.5, 0.25, -2, -1.5, -0.25, -2, 1.5, 0.25, -2, -1.5, 0.25, -2, -1.5, -0.25, 2, 1.5, 0.25, -2, 1.5, 0.25, 2, 1.5, -0.25, -2, 1.5, 0.25, -2, 1.5, -0.25, 2, 1.5, -0.25, -2, -1.5, 0.25, 2, -1.5, 0.25, -2, -1.5, -0.25, 2, -1.5, 0.25, 2, -1.5, -0.25, -2, -1.5, -0.25)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_skg14"]
+data = PackedVector3Array(-2, 1.5, 0.25, 2, 1.5, 0.25, -2, -1.5, 0.25, 2, 1.5, 0.25, 2, -1.5, 0.25, -2, -1.5, 0.25, 2, 1.5, -0.25, -2, 1.5, -0.25, 2, -1.5, -0.25, -2, 1.5, -0.25, -2, -1.5, -0.25, 2, -1.5, -0.25, 2, 1.5, 0.25, 2, 1.5, -0.25, 2, -1.5, 0.25, 2, 1.5, -0.25, 2, -1.5, -0.25, 2, -1.5, 0.25, -2, 1.5, -0.25, -2, 1.5, 0.25, -2, -1.5, -0.25, -2, 1.5, 0.25, -2, -1.5, 0.25, -2, -1.5, -0.25, 2, 1.5, 0.25, -2, 1.5, 0.25, 2, 1.5, -0.25, -2, 1.5, 0.25, -2, 1.5, -0.25, 2, 1.5, -0.25, -2, -1.5, 0.25, 2, -1.5, 0.25, -2, -1.5, -0.25, 2, -1.5, 0.25, 2, -1.5, -0.25, -2, -1.5, -0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d7hv6"]
+material = SubResource("StandardMaterial3D_xa5je")
+size = Vector3(4, 4, 0.5)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_hotr4"]
+data = PackedVector3Array(-2, 2, 0.25, 2, 2, 0.25, -2, -2, 0.25, 2, 2, 0.25, 2, -2, 0.25, -2, -2, 0.25, 2, 2, -0.25, -2, 2, -0.25, 2, -2, -0.25, -2, 2, -0.25, -2, -2, -0.25, 2, -2, -0.25, 2, 2, 0.25, 2, 2, -0.25, 2, -2, 0.25, 2, 2, -0.25, 2, -2, -0.25, 2, -2, 0.25, -2, 2, -0.25, -2, 2, 0.25, -2, -2, -0.25, -2, 2, 0.25, -2, -2, 0.25, -2, -2, -0.25, 2, 2, 0.25, -2, 2, 0.25, 2, 2, -0.25, -2, 2, 0.25, -2, 2, -0.25, 2, 2, -0.25, -2, -2, 0.25, 2, -2, 0.25, -2, -2, -0.25, 2, -2, 0.25, 2, -2, -0.25, -2, -2, -0.25)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6xr4"]
+albedo_color = Color(0.203922, 0.0901961, 0, 1)
+metallic_specular = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_fidcf"]
+material = SubResource("StandardMaterial3D_p6xr4")
+size = Vector3(0.5, 2.5, 1.2)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_8qyhk"]
+data = PackedVector3Array(-0.25, 1.25, 0.6, 0.25, 1.25, 0.6, -0.25, -1.25, 0.6, 0.25, 1.25, 0.6, 0.25, -1.25, 0.6, -0.25, -1.25, 0.6, 0.25, 1.25, -0.6, -0.25, 1.25, -0.6, 0.25, -1.25, -0.6, -0.25, 1.25, -0.6, -0.25, -1.25, -0.6, 0.25, -1.25, -0.6, 0.25, 1.25, 0.6, 0.25, 1.25, -0.6, 0.25, -1.25, 0.6, 0.25, 1.25, -0.6, 0.25, -1.25, -0.6, 0.25, -1.25, 0.6, -0.25, 1.25, -0.6, -0.25, 1.25, 0.6, -0.25, -1.25, -0.6, -0.25, 1.25, 0.6, -0.25, -1.25, 0.6, -0.25, -1.25, -0.6, 0.25, 1.25, 0.6, -0.25, 1.25, 0.6, 0.25, 1.25, -0.6, -0.25, 1.25, 0.6, -0.25, 1.25, -0.6, 0.25, 1.25, -0.6, -0.25, -1.25, 0.6, 0.25, -1.25, 0.6, -0.25, -1.25, -0.6, 0.25, -1.25, 0.6, 0.25, -1.25, -0.6, -0.25, -1.25, -0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yveqw"]
+transparency = 1
+albedo_color = Color(0.745098, 1, 1, 0.0784314)
+
+[sub_resource type="BoxMesh" id="BoxMesh_34ffx"]
+material = SubResource("StandardMaterial3D_yveqw")
+size = Vector3(0.3, 2.5, 1.1)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_a1row"]
+data = PackedVector3Array(-0.15, 1.25, 0.55, 0.15, 1.25, 0.55, -0.15, -1.25, 0.55, 0.15, 1.25, 0.55, 0.15, -1.25, 0.55, -0.15, -1.25, 0.55, 0.15, 1.25, -0.55, -0.15, 1.25, -0.55, 0.15, -1.25, -0.55, -0.15, 1.25, -0.55, -0.15, -1.25, -0.55, 0.15, -1.25, -0.55, 0.15, 1.25, 0.55, 0.15, 1.25, -0.55, 0.15, -1.25, 0.55, 0.15, 1.25, -0.55, 0.15, -1.25, -0.55, 0.15, -1.25, 0.55, -0.15, 1.25, -0.55, -0.15, 1.25, 0.55, -0.15, -1.25, -0.55, -0.15, 1.25, 0.55, -0.15, -1.25, 0.55, -0.15, -1.25, -0.55, 0.15, 1.25, 0.55, -0.15, 1.25, 0.55, 0.15, 1.25, -0.55, -0.15, 1.25, 0.55, -0.15, 1.25, -0.55, 0.15, 1.25, -0.55, -0.15, -1.25, 0.55, 0.15, -1.25, 0.55, -0.15, -1.25, -0.55, 0.15, -1.25, 0.55, 0.15, -1.25, -0.55, -0.15, -1.25, -0.55)
+
+[sub_resource type="SteamAudioMaterial" id="SteamAudioMaterial_gq68p"]
+absorption_low = 0.06
+absorption_mid = 0.03
+absorption_high = 0.02
+scattering = 0.05
+transmission_low = 0.7
+transmission_mid = 0.6
+transmission_high = 0.4
+
+[node name="Wooden House" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 2)
+mesh = SubResource("BoxMesh_1ds6j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_fpg8h")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="MeshInstance3D/StaticBody3D/CollisionShape3D"]
+material = ExtResource("2_lm25q")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -2)
+mesh = SubResource("BoxMesh_1ds6j")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_skg14")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D2/StaticBody3D/CollisionShape3D"]
+material = ExtResource("2_lm25q")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.19209e-07, 0, 4)
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 2.75, 0)
+mesh = SubResource("BoxMesh_d7hv6")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D4/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_hotr4")
+
+[node name="SteamAudioGeometry4" type="SteamAudioGeometry" parent="MeshInstance3D4/StaticBody3D/CollisionShape3D"]
+material = ExtResource("2_lm25q")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 1.19209e-07, 2, 1.25)
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 1.25, 1.15)
+mesh = SubResource("BoxMesh_fidcf")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D7"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D7/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_8qyhk")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D7/StaticBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.6)
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 1.25, -1.15)
+mesh = SubResource("BoxMesh_fidcf")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D9"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D9/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_8qyhk")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D9/StaticBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.6)
+
+[node name="MeshInstance3D10" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75, 1.25, 1.15)
+mesh = SubResource("BoxMesh_fidcf")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D10"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D10/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_8qyhk")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D10/StaticBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.6)
+
+[node name="MeshInstance3D11" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75, 1.25, -1.15)
+mesh = SubResource("BoxMesh_fidcf")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D11"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D11/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_8qyhk")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D11/StaticBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.6)
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.85, 1.25, 0)
+mesh = SubResource("BoxMesh_34ffx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D8"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D8/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_a1row")
+
+[node name="SteamAudioGeometry3" type="SteamAudioGeometry" parent="MeshInstance3D8/StaticBody3D/CollisionShape3D"]
+material = SubResource("SteamAudioMaterial_gq68p")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -2.6)

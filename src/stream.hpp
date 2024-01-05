@@ -3,6 +3,7 @@
 
 #include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/ref.hpp"
+#include "player.hpp"
 #include "steam_audio.hpp"
 #include <phonon.h>
 #include <godot_cpp/classes/audio_frame.hpp>
@@ -17,6 +18,7 @@ class SteamAudio;
 class SteamAudioStream : public AudioStream {
 	GDCLASS(SteamAudioStream, AudioStream)
 	friend class SteamAudioStreamPlayback;
+	Ref<AudioStream> stream;
 
 protected:
 	static void _bind_methods();
@@ -26,6 +28,9 @@ public:
 	~SteamAudioStream();
 
 	Ref<AudioStreamPlayback> _instantiate_playback() const override;
+	void set_stream(Ref<AudioStream> p_stream);
+
+	SteamAudioPlayer *parent;
 };
 
 class SteamAudioStreamPlayback : public AudioStreamPlayback {
@@ -35,11 +40,8 @@ class SteamAudioStreamPlayback : public AudioStreamPlayback {
 private:
 	Ref<AudioStream> stream;
 	Ref<AudioStreamPlayback> stream_playback;
-	LocalSteamAudioState local_state;
 
-	std::atomic<bool> is_local_state_init;
-
-	void init_local_state();
+	std::atomic<bool> is_active;
 
 protected:
 	static void _bind_methods();
@@ -48,8 +50,7 @@ public:
 	SteamAudioStreamPlayback();
 	~SteamAudioStreamPlayback();
 
-	void set_parent(Node3D *node);
-	void set_cfg(SteamAudioSourceConfig cfg);
+	void set_stream(Ref<AudioStream> p_stream);
 
 	virtual int32_t _mix(AudioFrame *buffer, double rate_scale,
 			int32_t frames) override;
@@ -57,6 +58,9 @@ public:
 			float p_volume_db, float p_pitch_scale);
 	void _start(double from_pos) override;
 	void _stop() override;
+	bool _is_playing() const override;
+
+	SteamAudioPlayer *parent = nullptr;
 };
 
 #endif
