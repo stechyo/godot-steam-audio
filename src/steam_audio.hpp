@@ -3,6 +3,7 @@
 
 #include "godot_cpp/variant/transform3d.hpp"
 #include <phonon.h>
+#include <godot_cpp/classes/audio_stream_player3d.hpp>
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <mutex>
@@ -34,7 +35,7 @@ struct GlobalSteamAudioState {
 };
 
 struct SteamAudioSource {
-	Node3D *player = nullptr;
+	AudioStreamPlayer3D *player = nullptr;
 	IPLSource src;
 };
 

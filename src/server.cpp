@@ -37,6 +37,9 @@ void SteamAudioServer::tick() {
 			UtilityFunctions::push_warning(
 					"local state has empty player, not updating simulation state");
 		}
+		if (!ls->src.player->is_playing()) {
+			continue;
+		}
 
 		Vector3 src_pos = ls->src.player->get_global_position();
 		ls->dir_to_listener = src_pos - self->listener->get_global_position();
@@ -78,6 +81,14 @@ void SteamAudioServer::tick() {
 	SteamAudio::log(SteamAudio::log_debug, "tick: direct sim complete");
 
 	for (auto ls : self->local_states) {
+		if (ls->src.player == nullptr) {
+			UtilityFunctions::push_warning(
+					"local state has empty player, not updating simulation state");
+		}
+		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+
 		IPLSimulationOutputs outputs{};
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_DIRECT, &outputs);
 		ls->direct_outputs = outputs.direct;
@@ -90,6 +101,14 @@ void SteamAudioServer::tick() {
 
 	global_state.refl_ir_lock.lock();
 	for (auto ls : local_states) {
+		if (ls->src.player == nullptr) {
+			UtilityFunctions::push_warning(
+					"local state has empty player, not updating simulation state");
+		}
+		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+
 		IPLSimulationOutputs outputs;
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &outputs);
 		ls->refl_outputs = outputs.reflections;
@@ -97,6 +116,14 @@ void SteamAudioServer::tick() {
 	global_state.refl_ir_lock.unlock();
 
 	for (auto ls : self->local_states) {
+		if (ls->src.player == nullptr) {
+			UtilityFunctions::push_warning(
+					"local state has empty player, not updating simulation state");
+		}
+		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+
 		Vector3 src_pos = ls->src.player->get_global_position();
 		IPLCoordinateSpace3 src_coords;
 		src_coords.ahead = IPLVector3{};
