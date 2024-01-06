@@ -2,7 +2,13 @@ extends SteamAudioPlayer
 
 @export var anim: AnimationPlayer
 
-func _process(_delta):
+var timeout := 0.0
+
+func _process(delta):
 	if !is_playing():
-		play()
-		anim.play("fade")
+		timeout -= delta 
+
+		if timeout < 0:
+			play()
+			anim.play("fade")
+			timeout = 0.5
