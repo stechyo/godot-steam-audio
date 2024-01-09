@@ -1,7 +1,7 @@
 # godot-steam-audio
 This is a GDExtension that integrates the [steam-audio](https://valvesoftware.github.io/steam-audio/) library into Godot 4.2. 
 
-### [Demo Video](https://youtu.be/9ltXpaphysc)  
+### [Demo Video](https://www.youtube.com/watch?v=vRnzfnb93Gw)
 ![A picture of the editor screen with some godot-steam-audio nodes.](doc/imgs/editor.png)
 
 This extension is in a pre-alpha phase, will have bugs and missing polish, and might crash. Linux and Windows
