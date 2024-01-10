@@ -45,6 +45,7 @@ struct SteamAudioSourceConfig {
 	int transm_rays;
 	float min_attn_dist;
 	int ambisonics_order;
+	float max_refl_dist;
 	bool is_dist_attn_on;
 	bool is_ambisonics_on;
 	bool is_occlusion_on;

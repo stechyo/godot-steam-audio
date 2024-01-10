@@ -17,7 +17,6 @@
 #include "phonon.h"
 #include "server.hpp"
 #include "steam_audio.hpp"
-#include <numeric>
 
 void SteamAudioGeometry::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_material"), &SteamAudioGeometry::get_material);
@@ -106,7 +105,7 @@ void SteamAudioGeometry::create_meshes_from_mesh_inst_3d(MeshInstance3D *mesh_in
 	for (int i = 0; i < mesh->get_surface_count(); i++) {
 		auto ipl_mesh = ipl_mesh_to_godot_mesh(mesh, material, trf, i);
 		meshes.push_back(ipl_mesh);
-		iplStaticMeshAdd(ipl_mesh, SteamAudioServer::get_singleton()->get_global_state()->scene);
+		SteamAudioServer::get_singleton()->add_static_mesh(ipl_mesh);
 	}
 }
 

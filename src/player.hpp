@@ -7,7 +7,6 @@
 #include "steam_audio.hpp"
 #include <phonon.h>
 #include <godot_cpp/classes/audio_stream_player3d.hpp>
-#include <optional>
 
 using namespace godot;
 
@@ -24,7 +23,8 @@ private:
 		16,
 		0.0f,
 		1,
-		true,
+		10000.0f,
+		false,
 		true,
 		true,
 		false
@@ -60,6 +60,8 @@ public:
 	void set_min_attenuation_dist(float p_min_attenuation_dist);
 	int get_ambisonics_order();
 	void set_ambisonics_order(int p_ambisonics_order);
+	float get_max_reflection_dist();
+	void set_max_reflection_dist(float p_max_reflection_dist);
 
 	bool get_loop_sub_stream();
 	void set_loop_sub_stream(bool p_loop_sub_stream);

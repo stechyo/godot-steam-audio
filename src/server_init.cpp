@@ -81,6 +81,12 @@ IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 		handleErr(err);
 		scene_cfg.embreeDevice = embree_dev;
 	}
+	scene_cfg.closestHitCallback = nullptr;
+	scene_cfg.anyHitCallback = nullptr;
+	scene_cfg.batchedClosestHitCallback = nullptr;
+	scene_cfg.batchedAnyHitCallback = nullptr;
+	scene_cfg.userData = nullptr;
+	scene_cfg.radeonRaysDevice = nullptr;
 	return scene_cfg;
 }
 
