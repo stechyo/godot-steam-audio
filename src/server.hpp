@@ -27,6 +27,8 @@ private:
 	std::mutex refl_mux;
 	std::condition_variable cv;
 
+	std::vector<IPLStaticMesh> meshes_to_add;
+
 	// TODO: allow for multiple
 	SteamAudioListener *listener;
 
@@ -48,6 +50,7 @@ public:
 	void add_listener(SteamAudioListener *listener);
 	void add_local_state(LocalSteamAudioState *ls);
 	void remove_local_state(LocalSteamAudioState *ls);
+	void add_static_mesh(IPLStaticMesh mesh);
 
 	void tick();
 };

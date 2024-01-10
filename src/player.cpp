@@ -16,6 +16,8 @@ void SteamAudioPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_dist_attn_on", "p_dist_attn_on"), &SteamAudioPlayer::set_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("get_min_attenuation_distance"), &SteamAudioPlayer::get_min_attenuation_dist);
 	ClassDB::bind_method(D_METHOD("set_min_attenuation_distance", "p_min_attenuation_distance"), &SteamAudioPlayer::set_min_attenuation_dist);
+	ClassDB::bind_method(D_METHOD("set_max_reflection_distance", "p_max_reflection_distance"), &SteamAudioPlayer::set_max_reflection_dist);
+	ClassDB::bind_method(D_METHOD("get_max_reflection_distance"), &SteamAudioPlayer::get_max_reflection_dist);
 	ClassDB::bind_method(D_METHOD("is_occlusion_on"), &SteamAudioPlayer::is_occlusion_on);
 	ClassDB::bind_method(D_METHOD("set_occlusion_on", "p_occlusion_on"), &SteamAudioPlayer::set_occlusion_on);
 	ClassDB::bind_method(D_METHOD("is_ambisonics_on"), &SteamAudioPlayer::is_ambisonics_on);
@@ -50,6 +52,7 @@ void SteamAudioPlayer::_bind_methods() {
 
 	ADD_GROUP("Reflection", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "reflection"), "set_reflection_on", "is_reflection_on");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "max_reflection_distance", PROPERTY_HINT_RANGE, "0.0,20000.0,0.1"), "set_max_reflection_distance", "get_max_reflection_distance");
 }
 
 SteamAudioPlayer::SteamAudioPlayer() {
@@ -142,7 +145,17 @@ void SteamAudioPlayer::init_local_state() {
 
 void SteamAudioPlayer::_ready() {
 	set_panning_strength(0.0f);
-	set_attenuation_model(ATTENUATION_DISABLED);
+	if (cfg.is_dist_attn_on) {
+		set_attenuation_model(ATTENUATION_DISABLED);
+	}
+
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		UtilityFunctions::push_warning("You cannot use a stream that isn't SteamAudioStream for SteamAudioPlayer. Setting the stream to a new SteamAudioStream.");
+		Ref<SteamAudioStream> new_stream;
+		new_stream.instantiate();
+		set_stream(new_stream);
+	}
 
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -152,11 +165,12 @@ void SteamAudioPlayer::_ready() {
 		sub_stream->set("loop", true);
 	}
 
-	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
 	if (str == nullptr) {
 		UtilityFunctions::push_error(" \
 			The stream of a SteamAudioPlayer must be a \
 			SteamAudioStream. No sound will be played.");
+		queue_free();
 	}
 
 	if (cfg.ambisonics_order > SteamAudioConfig::max_ambisonics_order) {
@@ -184,9 +198,16 @@ void SteamAudioPlayer::_process(double delta) {
 		UtilityFunctions::push_warning("Panning strength is always zero on SteamAudioPlayer. You can control panning by enabling or disabling ambisonics.");
 		set_panning_strength(0.0f);
 	}
-	if (get_attenuation_model() != ATTENUATION_DISABLED) {
-		UtilityFunctions::push_warning("The attenuation model is always disabled on SteamAudioPlayer. You can control attenuation by enabling or disabling it above.");
+	if (cfg.is_dist_attn_on && get_attenuation_model() != ATTENUATION_DISABLED) {
+		UtilityFunctions::push_warning("You cannot enable Godot's and SteamAudio's distance attenuation features at the same time. Disable SteamAudio's attenuation before adjusting Godot's.");
 		set_attenuation_model(ATTENUATION_DISABLED);
+	}
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		UtilityFunctions::push_warning("You cannot use a stream that isn't SteamAudioStream for SteamAudioPlayer. Setting the stream to a new SteamAudioStream.");
+		Ref<SteamAudioStream> new_stream;
+		new_stream.instantiate();
+		set_stream(new_stream);
 	}
 }
 
@@ -210,6 +231,9 @@ float SteamAudioPlayer::get_min_attenuation_dist() { return cfg.min_attn_dist; }
 void SteamAudioPlayer::set_min_attenuation_dist(float p_min_attenuation_dist) { cfg.min_attn_dist = p_min_attenuation_dist; }
 int SteamAudioPlayer::get_ambisonics_order() { return cfg.ambisonics_order; }
 void SteamAudioPlayer::set_ambisonics_order(int p_ambisonics_order) { cfg.ambisonics_order = p_ambisonics_order; }
+float SteamAudioPlayer::get_max_reflection_dist() { return cfg.max_refl_dist; }
+void SteamAudioPlayer::set_max_reflection_dist(float p_max_reflection_dist) { cfg.max_refl_dist = p_max_reflection_dist; }
+
 bool SteamAudioPlayer::get_loop_sub_stream() { return loop_sub_stream; }
 void SteamAudioPlayer::set_loop_sub_stream(bool p_loop_sub_stream) { loop_sub_stream = p_loop_sub_stream; }
 
@@ -224,5 +248,9 @@ void SteamAudioPlayer::set_occlusion_on(bool p_occlusion_on) { cfg.is_occlusion_
 
 PackedStringArray SteamAudioPlayer::_get_configuration_warnings() const {
 	PackedStringArray res;
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		res.push_back("This player's stream is either not set or not a SteamAudioStream. Please set it to a SteamAudioStream and use the sub stream property to set the audio stream you want to play.");
+	}
 	return res;
 }

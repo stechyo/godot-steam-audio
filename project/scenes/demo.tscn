@@ -199,14 +199,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 [node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Wooden House"]
 sub_stream = ExtResource("3_0iivb")
 loop_sub_stream = true
-min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.0999999)
 stream = SubResource("SteamAudioStream_vraar")
-attenuation_model = 3
 volume_db = 20.0
 autoplay = true
 panning_strength = 0.0
+metadata/_edit_group_ = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Wooden House/SteamAudioPlayer"]
 light_energy = 2.0
@@ -228,11 +227,11 @@ min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 stream = SubResource("SteamAudioStream_fkje5")
-attenuation_model = 3
 volume_db = 20.0
 panning_strength = 0.0
 script = ExtResource("7_gx8pe")
 anim = NodePath("AnimationPlayer")
+metadata/_edit_group_ = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Wooden House with RandomStream/Pluck Randomizer"]
 light_energy = 2.0
@@ -295,6 +294,7 @@ material = ExtResource("6_ph4pe")
 [node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Carpet House"]
 sub_stream = ExtResource("3_0iivb")
 loop_sub_stream = true
+distance_attenuation = true
 min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.0999999)
@@ -303,6 +303,7 @@ attenuation_model = 3
 volume_db = 20.0
 autoplay = true
 panning_strength = 0.0
+metadata/_edit_group_ = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Carpet House/SteamAudioPlayer"]
 light_energy = 2.0
@@ -324,10 +325,10 @@ loop_sub_stream = true
 min_attenuation_distance = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 1)
 stream = SubResource("SteamAudioStream_vraar")
-attenuation_model = 3
 volume_db = 20.0
 autoplay = true
 panning_strength = 0.0
+metadata/_edit_group_ = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Collider Test/SteamAudioPlayer3"]
 light_energy = 2.0

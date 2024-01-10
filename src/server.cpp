@@ -1,5 +1,4 @@
 #include "server.hpp"
-#include "config.hpp"
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/project_settings.hpp"
 #include "godot_cpp/core/class_db.hpp"
@@ -109,6 +108,10 @@ void SteamAudioServer::tick() {
 			continue;
 		}
 
+		if (ls->src.player->get_global_position().distance_to(listener->get_global_position()) > ls->cfg.max_refl_dist) {
+			continue;
+		}
+
 		IPLSimulationOutputs outputs;
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &outputs);
 		ls->refl_outputs = outputs.reflections;
@@ -121,6 +124,9 @@ void SteamAudioServer::tick() {
 					"local state has empty player, not updating simulation state");
 		}
 		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+		if (ls->src.player->get_global_position().distance_to(listener->get_global_position()) > ls->cfg.max_refl_dist) {
 			continue;
 		}
 
@@ -183,6 +189,9 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 
 	IPLSceneSettings scene_cfg = create_scene_cfg(global_state.ctx);
 	init_scene(&scene_cfg);
+	for (auto m : meshes_to_add) {
+		iplStaticMeshAdd(m, global_state.scene);
+	}
 
 	global_state.sim = create_simulator(
 			global_state.ctx, global_state.audio_cfg, scene_cfg);
@@ -243,6 +252,14 @@ void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
 	}
 	local_states.erase(it);
 	local_states_have_changed.store(true);
+}
+
+void SteamAudioServer::add_static_mesh(IPLStaticMesh mesh) {
+	if (is_global_state_init) {
+		iplStaticMeshAdd(mesh, global_state.scene);
+	} else {
+		meshes_to_add.push_back(mesh);
+	}
 }
 
 SteamAudioServer::SteamAudioServer() {
