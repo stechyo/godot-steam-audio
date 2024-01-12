@@ -8,7 +8,9 @@ install-steam-audio:
 
 release:
 	scons platform=linux target=template_debug && scons platform=windows target=template_debug
-	cp -r ./project ./godot-steam-audio
-	rm -rI ./godot-steam-audio/.godot ./godot-steam-audio/.gitignore ./godot-steam-audio/.gitattributes ./godot-steam-audio/bin/libphonon.so
+	mkdir godot-steam-audio
+	cp -r ./project ./godot-steam-audio/demo
+	rm -rI ./godot-steam-audio/demo/.godot ./godot-steam-audio/demo/.gitignore ./godot-steam-audio/demo/.gitattributes ./godot-steam-audio/demo/addons/godot-steam-audio/bin/libphonon.so
+	cp -r ./godot-steam-audio/demo/addons ./godot-steam-audio/addons
 	zip -r ./godot-steam-audio-vX.Y.Z.zip godot-steam-audio README.md
 	rm -rI ./godot-steam-audio

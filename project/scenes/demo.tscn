@@ -1,12 +1,12 @@
 [gd_scene load_steps=36 format=3 uid="uid://bilxmr83dwsgw"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_c2adp"]
-[ext_resource type="SteamAudioMaterial" uid="uid://dbai50r63k346" path="res://addons/steamaudio/materials/rock_material.tres" id="1_wtcfy"]
+[ext_resource type="SteamAudioMaterial" uid="uid://dbai50r63k346" path="res://addons/godot-steam-audio/materials/rock_material.tres" id="1_wtcfy"]
 [ext_resource type="AudioStream" uid="uid://badsntcuvwx3t" path="res://sound/2.mp3" id="3_0iivb"]
 [ext_resource type="PackedScene" uid="uid://6sgtpvtg5aic" path="res://scenes/wooden_house.tscn" id="3_tysju"]
 [ext_resource type="AudioStream" uid="uid://ca6667b63t1vv" path="res://sound/pluck1.mp3" id="5_00edw"]
 [ext_resource type="AudioStream" uid="uid://4axfbe53b587" path="res://sound/pluck2.mp3" id="6_dw5dv"]
-[ext_resource type="SteamAudioMaterial" uid="uid://cexuij8fef5ay" path="res://addons/steamaudio/materials/carpet_material.tres" id="6_ph4pe"]
+[ext_resource type="SteamAudioMaterial" uid="uid://cexuij8fef5ay" path="res://addons/godot-steam-audio/materials/carpet_material.tres" id="6_ph4pe"]
 [ext_resource type="Script" path="res://src/random_pluck.gd" id="7_gx8pe"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nkwlr"]

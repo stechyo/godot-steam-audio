@@ -15,7 +15,7 @@ elif env["platform"] == "windows":
 
 
 library = env.SharedLibrary(
-    "project/bin/godot-steam-audio{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+    "project/addons/godot-steam-audio/bin/godot-steam-audio{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
     source=sources,
 )
 

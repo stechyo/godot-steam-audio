@@ -1,5 +1,6 @@
 # godot-steam-audio
-This is a GDExtension that integrates the [steam-audio](https://valvesoftware.github.io/steam-audio/) library into Godot 4.2. 
+This is a GDExtension that integrates the [steam-audio](https://valvesoftware.github.io/steam-audio/) library
+into Godot 4.2. This adds sound effects such as occlusion and reverb into the engine.
 
 ### [Demo Video](https://www.youtube.com/watch?v=vRnzfnb93Gw)
 ![A picture of the editor screen with some godot-steam-audio nodes.](doc/imgs/editor.png)
@@ -22,10 +23,10 @@ are currently working. Mac probably works, but I don't have the time nor the mon
  - Download the [latest release](https://github.com/stechyo/godot/releases/tag/steam-audio) or clone and build [my fork of Godot](https://github.com/stechyo/godot/tree/4.2-gdext/audio-stream-funcs).
  - Download the [latest release](https://github.com/stechyo/godot-steam-audio/releases/latest) of the extension or build it yourself.
  - Download the [latest supported release](https://github.com/ValveSoftware/steam-audio/releases/tag/v4.5.0) of steam-audio, and copy the binaries 
-   that you find in the `lib` folder for your operating system to the `bin/` folder of your project, which 
+   that you find in the `lib` folder for your operating system to the `addons/godot-steam-audio/bin/` folder of your project, which 
    should contain a `libgodot-steam-audio` library (.dll or .so) and a .gdextension file. Note that, since your OS is likely 64-bit, you'll want the x64 version (e.g. `windows-x64`).
 
-Your project should have a `bin/` folder with:
+Your project should have an `addons/godot-steam-audio/bin/` folder with:
  - `libgodot-steam-audio.gdextension`
  - `libgodot-steam-audio.linux.template_debug.x86_64` for Linux, or a similar .dll for Windows
  - `libphonon.so` for Linux, or `phonon.dll`, `phonon.lib` and some other files for Windows - these are the
