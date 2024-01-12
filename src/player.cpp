@@ -100,6 +100,11 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.mono);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_ambi);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_out);
+
+	if (!pb.is_null()) {
+		auto playback = dynamic_cast<SteamAudioStreamPlayback *>(pb.ptr());
+		playback->parent = nullptr;
+	}
 }
 
 LocalSteamAudioState *SteamAudioPlayer::get_local_state() {
@@ -198,9 +203,9 @@ void SteamAudioPlayer::_ready() {
 	// The stream might be actually instantiated before Player::_ready().
 	// If so, transfer the necessary data directly to it.
 	if (this->is_playing() && !get_stream_playback().is_null()) {
-		auto pb = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
-		pb->parent = this;
-		pb->set_stream(sub_stream);
+		auto playback = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
+		playback->parent = this;
+		playback->set_stream(sub_stream);
 	}
 }
 
@@ -215,6 +220,10 @@ void SteamAudioPlayer::_process(double delta) {
 	}
 	if (Engine::get_singleton()->is_editor_hint() && sub_stream.ptr() != get_stream().ptr()) {
 		set_stream(sub_stream);
+	}
+
+	if (is_playing() && !get_stream_playback().is_null()) {
+		pb = get_stream_playback();
 	}
 }
 

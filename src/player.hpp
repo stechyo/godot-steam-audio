@@ -14,6 +14,10 @@ class SteamAudioPlayer : public AudioStreamPlayer3D {
 	GDCLASS(SteamAudioPlayer, AudioStreamPlayer3D);
 
 private:
+	// This ref is kept because at destruction we can't get the playback
+	// since the player has stopped (even though the playback still mixes...)
+	Ref<AudioStreamPlayback> pb;
+
 	Ref<AudioStream> sub_stream;
 	// TODO: we can probably move these values inside local state
 	// for cleanup and the ability to adjust them at runtime

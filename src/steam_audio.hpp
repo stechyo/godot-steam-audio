@@ -6,7 +6,7 @@
 #include <godot_cpp/classes/audio_stream_player3d.hpp>
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <mutex>
+#include <shared_mutex>
 
 using namespace godot;
 
@@ -78,7 +78,7 @@ struct LocalSteamAudioState {
 	LocalSteamAudioBuffers bufs;
 	SteamAudioEffects fx;
 	SteamAudioSourceConfig cfg;
-	std::mutex mux;
+	std::shared_mutex mux;
 };
 
 inline int ambisonic_channels_from(int order) {

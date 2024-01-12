@@ -33,7 +33,6 @@ SteamAudioStreamPlayback::~SteamAudioStreamPlayback() {}
 
 int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, int32_t frames) {
 	if (parent == nullptr) {
-		SteamAudio::log(SteamAudio::log_error, "mixing: ERROR, parent is null!");
 		return frames;
 	}
 
@@ -57,6 +56,15 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 		return frames;
 	}
 	std::unique_lock lock(ls->mux);
+
+	// Some extra checks because at this point parent may have been deleted
+	if (parent == nullptr) {
+		return frames;
+	}
+	ls = parent->get_local_state();
+	if (ls == nullptr || !ls->src.player) {
+		return frames;
+	}
 
 	PackedVector2Array mixed_frames = stream_playback->get_raw_audio(rate_scale, frames);
 	frames = int(mixed_frames.size());
