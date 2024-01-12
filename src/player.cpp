@@ -58,6 +58,21 @@ void SteamAudioPlayer::_bind_methods() {
 SteamAudioPlayer::SteamAudioPlayer() {
 	is_local_state_init.store(false);
 	can_load_local_state.store(true);
+
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
+
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		Ref<SteamAudioStream> new_stream;
+		new_stream.instantiate();
+		new_stream->parent = this;
+		if (get_stream().ptr() != nullptr) {
+			new_stream->set_stream(get_stream());
+		}
+		this->set_stream(new_stream);
+	}
 }
 SteamAudioPlayer::~SteamAudioPlayer() {
 	SteamAudio::log(SteamAudio::log_debug, "destroying player");
@@ -149,28 +164,25 @@ void SteamAudioPlayer::_ready() {
 		set_attenuation_model(ATTENUATION_DISABLED);
 	}
 
-	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
-	if (str == nullptr) {
-		UtilityFunctions::push_warning("You cannot use a stream that isn't SteamAudioStream for SteamAudioPlayer. Setting the stream to a new SteamAudioStream.");
-		Ref<SteamAudioStream> new_stream;
-		new_stream.instantiate();
-		set_stream(new_stream);
-	}
-
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
-	if (loop_sub_stream && sub_stream->get("loop").get_type() != Variant::NIL) {
-		sub_stream->set("loop", true);
-	}
-
-	str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
 	if (str == nullptr) {
-		UtilityFunctions::push_error(" \
-			The stream of a SteamAudioPlayer must be a \
-			SteamAudioStream. No sound will be played.");
-		queue_free();
+		if (is_autoplay_enabled()) {
+			stop();
+		}
+		Ref<SteamAudioStream> new_stream;
+		new_stream.instantiate();
+		if (get_stream().ptr() != nullptr) {
+			new_stream->set_stream(get_stream());
+		}
+		set_stream(new_stream);
+		str = new_stream.ptr();
+		if (is_autoplay_enabled()) {
+			play();
+		}
 	}
 
 	if (cfg.ambisonics_order > SteamAudioConfig::max_ambisonics_order) {
@@ -180,7 +192,6 @@ void SteamAudioPlayer::_ready() {
 		cfg.occ_samples = SteamAudioConfig::max_num_occ_samples;
 	}
 
-	str->set_stream(sub_stream);
 	str->parent = this;
 
 	// TODO: do this properly, if it can be done
@@ -202,12 +213,8 @@ void SteamAudioPlayer::_process(double delta) {
 		UtilityFunctions::push_warning("You cannot enable Godot's and SteamAudio's distance attenuation features at the same time. Disable SteamAudio's attenuation before adjusting Godot's.");
 		set_attenuation_model(ATTENUATION_DISABLED);
 	}
-	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
-	if (str == nullptr) {
-		UtilityFunctions::push_warning("You cannot use a stream that isn't SteamAudioStream for SteamAudioPlayer. Setting the stream to a new SteamAudioStream.");
-		Ref<SteamAudioStream> new_stream;
-		new_stream.instantiate();
-		set_stream(new_stream);
+	if (Engine::get_singleton()->is_editor_hint() && sub_stream.ptr() != get_stream().ptr()) {
+		set_stream(sub_stream);
 	}
 }
 
@@ -216,6 +223,7 @@ void SteamAudioPlayer::set_sub_stream(Ref<AudioStream> p_sub_stream) {
 	sub_stream = p_sub_stream;
 	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
 	if (str == nullptr) {
+		set_stream(p_sub_stream);
 		return;
 	}
 	str->set_stream(sub_stream);
@@ -248,9 +256,5 @@ void SteamAudioPlayer::set_occlusion_on(bool p_occlusion_on) { cfg.is_occlusion_
 
 PackedStringArray SteamAudioPlayer::_get_configuration_warnings() const {
 	PackedStringArray res;
-	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
-	if (str == nullptr) {
-		res.push_back("This player's stream is either not set or not a SteamAudioStream. Please set it to a SteamAudioStream and use the sub stream property to set the audio stream you want to play.");
-	}
 	return res;
 }
