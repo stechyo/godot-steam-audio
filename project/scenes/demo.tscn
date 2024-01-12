@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bilxmr83dwsgw"]
+[gd_scene load_steps=36 format=3 uid="uid://bilxmr83dwsgw"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_c2adp"]
 [ext_resource type="SteamAudioMaterial" uid="uid://dbai50r63k346" path="res://addons/steamaudio/materials/rock_material.tres" id="1_wtcfy"]
@@ -33,8 +33,6 @@ data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_j0ktp"]
 
-[sub_resource type="SteamAudioStream" id="SteamAudioStream_vraar"]
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dg8l6"]
 albedo_color = Color(0.976471, 0.133333, 0.286275, 1)
 emission_enabled = true
@@ -49,8 +47,6 @@ stream_0/stream = ExtResource("5_00edw")
 stream_0/weight = 1.0
 stream_1/stream = ExtResource("6_dw5dv")
 stream_1/weight = 1.0
-
-[sub_resource type="SteamAudioStream" id="SteamAudioStream_fkje5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyn86"]
 albedo_color = Color(0.976471, 0.133333, 0.286275, 1)
@@ -201,7 +197,7 @@ sub_stream = ExtResource("3_0iivb")
 loop_sub_stream = true
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.0999999)
-stream = SubResource("SteamAudioStream_vraar")
+stream = ExtResource("3_0iivb")
 volume_db = 20.0
 autoplay = true
 panning_strength = 0.0
@@ -226,7 +222,7 @@ sub_stream = SubResource("AudioStreamRandomizer_w72gs")
 min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-stream = SubResource("SteamAudioStream_fkje5")
+stream = SubResource("AudioStreamRandomizer_w72gs")
 volume_db = 20.0
 panning_strength = 0.0
 script = ExtResource("7_gx8pe")
@@ -298,7 +294,7 @@ distance_attenuation = true
 min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.0999999)
-stream = SubResource("SteamAudioStream_vraar")
+stream = ExtResource("3_0iivb")
 attenuation_model = 3
 volume_db = 20.0
 autoplay = true
@@ -324,7 +320,7 @@ sub_stream = ExtResource("3_0iivb")
 loop_sub_stream = true
 min_attenuation_distance = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 1)
-stream = SubResource("SteamAudioStream_vraar")
+stream = ExtResource("3_0iivb")
 volume_db = 20.0
 autoplay = true
 panning_strength = 0.0
