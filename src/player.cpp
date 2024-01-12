@@ -191,7 +191,14 @@ void SteamAudioPlayer::_process(double delta) {
 }
 
 Ref<AudioStream> SteamAudioPlayer::get_sub_stream() { return sub_stream; }
-void SteamAudioPlayer::set_sub_stream(Ref<AudioStream> p_sub_stream) { sub_stream = p_sub_stream; }
+void SteamAudioPlayer::set_sub_stream(Ref<AudioStream> p_sub_stream) {
+	sub_stream = p_sub_stream;
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		return;
+	}
+	str->set_stream(sub_stream);
+}
 
 float SteamAudioPlayer::get_occlusion_radius() { return cfg.occ_radius; }
 void SteamAudioPlayer::set_occlusion_radius(float p_occlusion_radius) { cfg.occ_radius = p_occlusion_radius; }
