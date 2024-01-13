@@ -4,7 +4,7 @@ install-steam-audio:
 		| cut -d : -f 2,3 | tr -d \" | wget -O src/lib/steamaudio.zip -i -
 	unzip src/lib/steamaudio.zip -d src/lib/
 	rm src/lib/steamaudio.zip
-	cp src/lib/steamaudio/lib/linux-x64/libphonon.so project/bin
+	cp src/lib/steamaudio/lib/linux-x64/libphonon.so project/addons/godot-steam-audio/bin
 
 release:
 	scons platform=linux target=template_debug && scons platform=windows target=template_debug
