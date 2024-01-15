@@ -8,10 +8,6 @@
 #include "stream.hpp"
 
 void SteamAudioPlayer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_sub_stream"), &SteamAudioPlayer::get_sub_stream);
-	ClassDB::bind_method(D_METHOD("set_sub_stream", "p_sub_stream"), &SteamAudioPlayer::set_sub_stream);
-	ClassDB::bind_method(D_METHOD("get_loop_sub_stream"), &SteamAudioPlayer::get_loop_sub_stream);
-	ClassDB::bind_method(D_METHOD("set_loop_sub_stream", "p_loop_sub_stream"), &SteamAudioPlayer::set_loop_sub_stream);
 	ClassDB::bind_method(D_METHOD("is_dist_attn_on"), &SteamAudioPlayer::is_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("set_dist_attn_on", "p_dist_attn_on"), &SteamAudioPlayer::set_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("get_min_attenuation_distance"), &SteamAudioPlayer::get_min_attenuation_dist);
@@ -32,9 +28,6 @@ void SteamAudioPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_transmission_rays", "p_transmission_rays"), &SteamAudioPlayer::set_transmission_rays);
 	ClassDB::bind_method(D_METHOD("get_ambisonics_order"), &SteamAudioPlayer::get_ambisonics_order);
 	ClassDB::bind_method(D_METHOD("set_ambisonics_order", "p_ambisonics_order"), &SteamAudioPlayer::set_ambisonics_order);
-
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "sub_stream", PROPERTY_HINT_RESOURCE_TYPE, "AudioStream"), "set_sub_stream", "get_sub_stream");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "loop_sub_stream"), "set_loop_sub_stream", "get_loop_sub_stream");
 
 	ADD_GROUP("Distance Attenuation", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "distance_attenuation"), "set_dist_attn_on", "is_dist_attn_on");
@@ -185,6 +178,7 @@ void SteamAudioPlayer::_ready() {
 		}
 		set_stream(new_stream);
 		str = new_stream.ptr();
+		str->parent = this;
 		if (is_autoplay_enabled()) {
 			play();
 		}
@@ -195,17 +189,6 @@ void SteamAudioPlayer::_ready() {
 	}
 	if (cfg.occ_samples > SteamAudioConfig::max_num_occ_samples) {
 		cfg.occ_samples = SteamAudioConfig::max_num_occ_samples;
-	}
-
-	str->parent = this;
-
-	// TODO: do this properly, if it can be done
-	// The stream might be actually instantiated before Player::_ready().
-	// If so, transfer the necessary data directly to it.
-	if (this->is_playing() && !get_stream_playback().is_null()) {
-		auto playback = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
-		playback->parent = this;
-		playback->set_stream(sub_stream);
 	}
 }
 
@@ -218,24 +201,10 @@ void SteamAudioPlayer::_process(double delta) {
 		UtilityFunctions::push_warning("You cannot enable Godot's and SteamAudio's distance attenuation features at the same time. Disable SteamAudio's attenuation before adjusting Godot's.");
 		set_attenuation_model(ATTENUATION_DISABLED);
 	}
-	if (Engine::get_singleton()->is_editor_hint() && sub_stream.ptr() != get_stream().ptr()) {
-		set_stream(sub_stream);
-	}
 
 	if (is_playing() && !get_stream_playback().is_null()) {
 		pb = get_stream_playback();
 	}
-}
-
-Ref<AudioStream> SteamAudioPlayer::get_sub_stream() { return sub_stream; }
-void SteamAudioPlayer::set_sub_stream(Ref<AudioStream> p_sub_stream) {
-	sub_stream = p_sub_stream;
-	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
-	if (str == nullptr) {
-		set_stream(p_sub_stream);
-		return;
-	}
-	str->set_stream(sub_stream);
 }
 
 float SteamAudioPlayer::get_occlusion_radius() { return cfg.occ_radius; }
@@ -250,9 +219,6 @@ int SteamAudioPlayer::get_ambisonics_order() { return cfg.ambisonics_order; }
 void SteamAudioPlayer::set_ambisonics_order(int p_ambisonics_order) { cfg.ambisonics_order = p_ambisonics_order; }
 float SteamAudioPlayer::get_max_reflection_dist() { return cfg.max_refl_dist; }
 void SteamAudioPlayer::set_max_reflection_dist(float p_max_reflection_dist) { cfg.max_refl_dist = p_max_reflection_dist; }
-
-bool SteamAudioPlayer::get_loop_sub_stream() { return loop_sub_stream; }
-void SteamAudioPlayer::set_loop_sub_stream(bool p_loop_sub_stream) { loop_sub_stream = p_loop_sub_stream; }
 
 bool SteamAudioPlayer::is_dist_attn_on() { return cfg.is_dist_attn_on; }
 void SteamAudioPlayer::set_dist_attn_on(bool p_dist_attn_on) { cfg.is_dist_attn_on = p_dist_attn_on; }

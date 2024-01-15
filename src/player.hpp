@@ -18,7 +18,6 @@ private:
 	// since the player has stopped (even though the playback still mixes...)
 	Ref<AudioStreamPlayback> pb;
 
-	Ref<AudioStream> sub_stream;
 	// TODO: we can probably move these values inside local state
 	// for cleanup and the ability to adjust them at runtime
 	SteamAudioSourceConfig cfg{
@@ -33,7 +32,6 @@ private:
 		true,
 		false
 	};
-	bool loop_sub_stream = false;
 
 	LocalSteamAudioState local_state;
 	std::atomic<bool> is_local_state_init;
@@ -50,8 +48,6 @@ public:
 	void _ready() override;
 	void _process(double delta) override;
 
-	Ref<AudioStream> get_sub_stream();
-	void set_sub_stream(Ref<AudioStream> p_sub_stream);
 	LocalSteamAudioState *get_local_state();
 
 	float get_occlusion_radius();
@@ -66,9 +62,6 @@ public:
 	void set_ambisonics_order(int p_ambisonics_order);
 	float get_max_reflection_dist();
 	void set_max_reflection_dist(float p_max_reflection_dist);
-
-	bool get_loop_sub_stream();
-	void set_loop_sub_stream(bool p_loop_sub_stream);
 
 	bool is_dist_attn_on();
 	void set_dist_attn_on(bool p_dist_attn_on);
