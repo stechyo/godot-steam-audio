@@ -193,8 +193,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 [node name="Wooden House" parent="." instance=ExtResource("3_tysju")]
 
 [node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Wooden House"]
-sub_stream = ExtResource("3_0iivb")
-loop_sub_stream = true
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.0999999)
 stream = ExtResource("3_0iivb")
@@ -218,7 +216,6 @@ mesh = SubResource("SphereMesh_dnvdu")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6)
 
 [node name="Pluck Randomizer" type="SteamAudioPlayer" parent="Wooden House with RandomStream" node_paths=PackedStringArray("anim")]
-sub_stream = SubResource("AudioStreamRandomizer_w72gs")
 min_attenuation_distance = 5.0
 reflection = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -288,8 +285,6 @@ shape = SubResource("ConcavePolygonShape3D_1fgh1")
 material = ExtResource("6_ph4pe")
 
 [node name="SteamAudioPlayer" type="SteamAudioPlayer" parent="Carpet House"]
-sub_stream = ExtResource("3_0iivb")
-loop_sub_stream = true
 distance_attenuation = true
 min_attenuation_distance = 5.0
 reflection = true
@@ -316,8 +311,6 @@ mesh = SubResource("SphereMesh_dnvdu")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 11)
 
 [node name="SteamAudioPlayer3" type="SteamAudioPlayer" parent="Collider Test"]
-sub_stream = ExtResource("3_0iivb")
-loop_sub_stream = true
 min_attenuation_distance = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 1)
 stream = ExtResource("3_0iivb")
