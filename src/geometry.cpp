@@ -50,7 +50,6 @@ void SteamAudioGeometry::_ready() {
 }
 
 IPLStaticMesh godot_mesh_to_ipl_mesh(Ref<Mesh> mesh, IPLMaterial material, Transform3D trf, int surface_idx) {
-	SteamAudio::log(SteamAudio::log_debug, "godot_mesh_to_ipl_mesh");
 	Array dat = mesh->surface_get_arrays(surface_idx);
 	Array verts = dat[Mesh::ARRAY_VERTEX];
 	Array tris = dat[Mesh::ARRAY_INDEX];
@@ -85,12 +84,10 @@ IPLStaticMesh godot_mesh_to_ipl_mesh(Ref<Mesh> mesh, IPLMaterial material, Trans
 	IPLStaticMesh ipl_mesh;
 	iplStaticMeshCreate(SteamAudioServer::get_singleton()->get_global_state()->scene, &static_mesh_cfg, &ipl_mesh);
 
-	SteamAudio::log(SteamAudio::log_debug, "godot_mesh_to_ipl_mesh DONE");
 	return ipl_mesh;
 }
 
 std::vector<IPLStaticMesh> create_meshes_from_mesh_inst_3d(MeshInstance3D *mesh_inst, Ref<SteamAudioMaterial> mat) {
-	SteamAudio::log(SteamAudio::log_debug, "create_meshes_from_mesh_inst_3d");
 	std::vector<IPLStaticMesh> p_meshes;
 	Ref<Mesh> mesh = mesh_inst->get_mesh();
 	Transform3D trf = mesh_inst->get_global_transform();
@@ -107,12 +104,10 @@ std::vector<IPLStaticMesh> create_meshes_from_mesh_inst_3d(MeshInstance3D *mesh_
 		p_meshes.push_back(ipl_mesh);
 	}
 
-	SteamAudio::log(SteamAudio::log_debug, "create_meshes_from_mesh_inst_3d DONE");
 	return p_meshes;
 }
 
 std::vector<IPLStaticMesh> create_meshes_from_coll_inst_3d(CollisionShape3D *coll_inst, Ref<SteamAudioMaterial> mat) {
-	SteamAudio::log(SteamAudio::log_debug, "create_meshes_from_coll_inst_3d");
 	std::vector<IPLStaticMesh> p_meshes;
 	Transform3D trf = coll_inst->get_global_transform();
 	Ref<Mesh> mesh;
@@ -187,7 +182,6 @@ std::vector<IPLStaticMesh> create_meshes_from_coll_inst_3d(CollisionShape3D *col
 		p_meshes.push_back(ipl_mesh);
 	}
 	mesh.unref();
-	SteamAudio::log(SteamAudio::log_debug, "create_meshes_from_coll_inst_3d DONE");
 	return p_meshes;
 }
 
@@ -213,12 +207,9 @@ void SteamAudioGeometry::recalculate() {
 }
 
 void SteamAudioGeometry::create_geometry() {
-	SteamAudio::log(SteamAudio::log_debug, "create_geometry");
 	if (Object::cast_to<MeshInstance3D>(get_parent())) {
-		SteamAudio::log(SteamAudio::log_debug, "create_geometry from mesh");
 		meshes = create_meshes_from_mesh_inst_3d(Object::cast_to<MeshInstance3D>(get_parent()), mat);
 	} else if (Object::cast_to<CollisionShape3D>(get_parent())) {
-		SteamAudio::log(SteamAudio::log_debug, "create_geometry from col");
 		meshes = create_meshes_from_coll_inst_3d(Object::cast_to<CollisionShape3D>(get_parent()), mat);
 	} else {
 		UtilityFunctions::push_error("The parent of SteamAudioGeometry must be a MeshInstance3D or a CollisionShape3D.");
@@ -234,7 +225,6 @@ void SteamAudioGeometry::destroy_geometry() {
 }
 
 void SteamAudioGeometry::register_geometry() {
-	SteamAudio::log(SteamAudio::log_debug, "register geometry");
 	for (auto ipl_mesh : meshes) {
 		SteamAudioServer::get_singleton()->add_static_mesh(ipl_mesh);
 	}
