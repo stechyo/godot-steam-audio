@@ -45,8 +45,9 @@ protected:
 public:
 	SteamAudioPlayer();
 	~SteamAudioPlayer();
-	void _ready() override;
-	void _process(double delta) override;
+	void ready_internal();
+	void process_internal(double delta);
+	void _notification(int p_what);
 
 	LocalSteamAudioState *get_local_state();
 
