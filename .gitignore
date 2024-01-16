@@ -1,5 +1,8 @@
+.vscode
+*.pdb
 *.os
 src/lib/steamaudio
+src/*.obj
 .sconsign.dblite
 project/bin/*.so
 project/bin/*.dll

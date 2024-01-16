@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://bilxmr83dwsgw"]
+[gd_scene load_steps=39 format=3 uid="uid://bilxmr83dwsgw"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_c2adp"]
 [ext_resource type="SteamAudioMaterial" uid="uid://dbai50r63k346" path="res://addons/godot-steam-audio/materials/rock_material.tres" id="1_wtcfy"]
@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://4axfbe53b587" path="res://sound/pluck2.mp3" id="6_dw5dv"]
 [ext_resource type="SteamAudioMaterial" uid="uid://cexuij8fef5ay" path="res://addons/godot-steam-audio/materials/carpet_material.tres" id="6_ph4pe"]
 [ext_resource type="Script" path="res://src/random_pluck.gd" id="7_gx8pe"]
+[ext_resource type="Script" path="res://src/door.gd" id="8_jqgel"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nkwlr"]
 
@@ -115,6 +116,12 @@ _data = {
 "RESET": SubResource("Animation_elb2f"),
 "fade": SubResource("Animation_8pkb1")
 }
+
+[sub_resource type="BoxMesh" id="BoxMesh_qows3"]
+size = Vector3(0.21, 2.48, 1.165)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_ktcq1"]
+data = PackedVector3Array(-0.105, 1.24, 0.5825, 0.105, 1.24, 0.5825, -0.105, -1.24, 0.5825, 0.105, 1.24, 0.5825, 0.105, -1.24, 0.5825, -0.105, -1.24, 0.5825, 0.105, 1.24, -0.5825, -0.105, 1.24, -0.5825, 0.105, -1.24, -0.5825, -0.105, 1.24, -0.5825, -0.105, -1.24, -0.5825, 0.105, -1.24, -0.5825, 0.105, 1.24, 0.5825, 0.105, 1.24, -0.5825, 0.105, -1.24, 0.5825, 0.105, 1.24, -0.5825, 0.105, -1.24, -0.5825, 0.105, -1.24, 0.5825, -0.105, 1.24, -0.5825, -0.105, 1.24, 0.5825, -0.105, -1.24, -0.5825, -0.105, 1.24, 0.5825, -0.105, -1.24, 0.5825, -0.105, -1.24, -0.5825, 0.105, 1.24, 0.5825, -0.105, 1.24, 0.5825, 0.105, 1.24, -0.5825, -0.105, 1.24, 0.5825, -0.105, 1.24, -0.5825, 0.105, 1.24, -0.5825, -0.105, -1.24, 0.5825, 0.105, -1.24, 0.5825, -0.105, -1.24, -0.5825, 0.105, -1.24, 0.5825, 0.105, -1.24, -0.5825, -0.105, -1.24, -0.5825)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nsbs5"]
 albedo_color = Color(0.501961, 0, 0, 1)
@@ -244,6 +251,49 @@ mesh = SubResource("SphereMesh_s7swq")
 libraries = {
 "": SubResource("AnimationLibrary_b3x3w")
 }
+
+[node name="Door House" parent="." instance=ExtResource("3_tysju")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
+
+[node name="Pluck Randomizer" type="SteamAudioPlayer" parent="Door House" node_paths=PackedStringArray("anim")]
+sub_stream = SubResource("AudioStreamRandomizer_w72gs")
+min_attenuation_distance = 5.0
+reflection = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+stream = SubResource("AudioStreamRandomizer_w72gs")
+volume_db = 20.0
+panning_strength = 0.0
+script = ExtResource("7_gx8pe")
+anim = NodePath("../../Wooden House with RandomStream/Pluck Randomizer/AnimationPlayer")
+metadata/_edit_group_ = true
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Door House/Pluck Randomizer"]
+light_energy = 2.0
+shadow_enabled = true
+omni_range = 10.0
+omni_attenuation = 2.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Door House/Pluck Randomizer"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_s7swq")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Door House/Pluck Randomizer"]
+libraries = {
+"": SubResource("AnimationLibrary_b3x3w")
+}
+
+[node name="Door" type="MeshInstance3D" parent="Door House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.75308, 1.25421, 0)
+mesh = SubResource("BoxMesh_qows3")
+script = ExtResource("8_jqgel")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Door House/Door"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Door House/Door/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_ktcq1")
+
+[node name="SteamAudioGeometry" type="SteamAudioGeometry" parent="Door House/Door"]
 
 [node name="Carpet House" parent="." instance=ExtResource("3_tysju")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.9)

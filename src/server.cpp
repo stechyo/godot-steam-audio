@@ -192,6 +192,7 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	for (auto m : meshes_to_add) {
 		iplStaticMeshAdd(m, global_state.scene);
 	}
+	meshes_to_add.clear();
 
 	global_state.sim = create_simulator(
 			global_state.ctx, global_state.audio_cfg, scene_cfg);

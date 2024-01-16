@@ -17,19 +17,25 @@ private:
 	std::vector<IPLStaticMesh> meshes;
 	Ref<SteamAudioMaterial> mat;
 
-	void create_meshes_from_mesh_inst_3d(MeshInstance3D *mesh_inst);
-	void create_meshes_from_coll_inst_3d(CollisionShape3D *coll_inst);
-
+	void create_geometry();
+	void destroy_geometry();
+	void register_geometry();
+	void unregister_geometry();
 protected:
 	static void _bind_methods();
 
 public:
+	bool disabled = false;
+
 	SteamAudioGeometry();
 	~SteamAudioGeometry();
 	void _ready() override;
 
+	void recalculate();
 	Ref<SteamAudioMaterial> get_material();
 	void set_material(Ref<SteamAudioMaterial> p_material);
+	bool get_disabled() const { return disabled; }
+	void set_disabled(bool p_disabled);
 
 	PackedStringArray _get_configuration_warnings() const override;
 };
