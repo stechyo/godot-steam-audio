@@ -156,7 +156,20 @@ void SteamAudioPlayer::init_local_state() {
 	is_local_state_init.store(true);
 }
 
-void SteamAudioPlayer::_ready() {
+void SteamAudioPlayer::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE:
+			ready_internal();
+			break;
+		case NOTIFICATION_PROCESS:
+			process_internal(get_process_delta_time());
+			break;
+	}
+}
+
+void SteamAudioPlayer::ready_internal() {
+	set_process(true);
+
 	set_panning_strength(0.0f);
 	if (cfg.is_dist_attn_on) {
 		set_attenuation_model(ATTENUATION_DISABLED);
@@ -192,7 +205,7 @@ void SteamAudioPlayer::_ready() {
 	}
 }
 
-void SteamAudioPlayer::_process(double delta) {
+void SteamAudioPlayer::process_internal(double delta) {
 	if (get_panning_strength() > 0.0f) {
 		UtilityFunctions::push_warning("Panning strength is always zero on SteamAudioPlayer. You can control panning by enabling or disabling ambisonics.");
 		set_panning_strength(0.0f);
