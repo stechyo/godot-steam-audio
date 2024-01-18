@@ -34,7 +34,7 @@ public:
 	void recalculate();
 	Ref<SteamAudioMaterial> get_material();
 	void set_material(Ref<SteamAudioMaterial> p_material);
-	bool get_disabled() const { return disabled; }
+	bool is_disabled() const { return disabled; }
 	void set_disabled(bool p_disabled);
 
 	PackedStringArray _get_configuration_warnings() const override;

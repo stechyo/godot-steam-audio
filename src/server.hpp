@@ -51,6 +51,7 @@ public:
 	void add_local_state(LocalSteamAudioState *ls);
 	void remove_local_state(LocalSteamAudioState *ls);
 	void add_static_mesh(IPLStaticMesh mesh);
+	void remove_static_mesh(IPLStaticMesh mesh);
 
 	void tick();
 };

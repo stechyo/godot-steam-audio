@@ -3,7 +3,13 @@
 env = SConscript("src/lib/godot-cpp/SConstruct")
 
 env.Append(CPPPATH=["src/"])
-env.AppendUnique(CCFLAGS=("-isystem",  "src/lib/steamaudio/include/"))
+
+if env.get("CC", "").lower() == "cl":
+    # Building with MSVC
+    env.AppendUnique(CCFLAGS=("/I",  "src/lib/steamaudio/include/"))
+else:
+    env.AppendUnique(CCFLAGS=("-isystem",  "src/lib/steamaudio/include/"))
+
 sources = Glob("src/*.cpp")
 
 if env["platform"] == "linux":

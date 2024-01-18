@@ -6,3 +6,6 @@ src/*.obj
 .sconsign.dblite
 project/addons/godot-steam-audio/bin/*.so
 project/addons/godot-steam-audio/bin/*.dll
+project/addons/godot-steam-audio/bin/*.ilk
+project/addons/godot-steam-audio/bin/*.exp
+project/addons/godot-steam-audio/bin/*.lib

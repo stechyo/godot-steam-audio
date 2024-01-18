@@ -21,10 +21,10 @@
 void SteamAudioGeometry::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_material"), &SteamAudioGeometry::get_material);
 	ClassDB::bind_method(D_METHOD("set_material", "p_material"), &SteamAudioGeometry::set_material);
-	ClassDB::bind_method(D_METHOD("get_disabled"), &SteamAudioGeometry::get_disabled);
+	ClassDB::bind_method(D_METHOD("is_disabled"), &SteamAudioGeometry::is_disabled);
 	ClassDB::bind_method(D_METHOD("set_disabled", "p_disabled"), &SteamAudioGeometry::set_disabled);
 	ClassDB::bind_method(D_METHOD("recalculate"), &SteamAudioGeometry::recalculate);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disabled"), "set_disabled", "get_disabled");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "disabled"), "set_disabled", "is_disabled");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "SteamAudioMaterial"), "set_material", "get_material");
 }
 
@@ -231,8 +231,8 @@ void SteamAudioGeometry::register_geometry() {
 }
 
 void SteamAudioGeometry::unregister_geometry() {
-    for (auto mesh : meshes) {
-        iplStaticMeshRemove(mesh, SteamAudioServer::get_singleton()->get_global_state()->scene);
+    for (auto ipl_mesh : meshes) {
+		SteamAudioServer::get_singleton()->remove_static_mesh(ipl_mesh);
     }
 }
 
