@@ -4,5 +4,5 @@
 src/lib/steamaudio
 src/*.obj
 .sconsign.dblite
-project/bin/*.so
-project/bin/*.dll
+project/addons/godot-steam-audio/bin/*.so
+project/addons/godot-steam-audio/bin/*.dll
