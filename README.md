@@ -5,8 +5,10 @@ into Godot 4.2. This adds sound effects such as occlusion and reverb into the en
 ### [Demo Video](https://www.youtube.com/watch?v=vRnzfnb93Gw)
 ![A picture of the editor screen with some godot-steam-audio nodes.](doc/imgs/editor.png)
 
-This extension is in a pre-alpha phase, will have bugs and missing polish, and might crash. Linux and Windows
-are currently working. Mac probably works, but I don't have the time nor the money to support that, sorry.
+This extension is in an alpha phase, will have bugs and missing polish, and may crash. Don't expect to be able
+to ship a game with this extension right now unless you are ready to make some fixes/optimizations to it on
+your own (and if you do, PRs are accepted). Linux and Windows are currently working. Mac probably works, but I
+don't have the time nor the money to support that, sorry.
 
 ### Features 
  - Spatial ambisonics audio 
