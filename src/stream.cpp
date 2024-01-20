@@ -118,7 +118,7 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 
 	gs->refl_ir_lock.lock();
 	if (ls->refl_outputs.ir != nullptr && ls->cfg.is_reflection_on) {
-		iplAudioBufferDownmix(gs->ctx, &ls->bufs.direct, &ls->bufs.mono);
+		iplAudioBufferDownmix(gs->ctx, &ls->bufs.in, &ls->bufs.mono);
 		ls->refl_outputs.numChannels = ambisonic_channels_from(ls->cfg.ambisonics_order);
 		ls->refl_outputs.type = IPL_REFLECTIONEFFECTTYPE_CONVOLUTION;
 		ls->refl_outputs.irSize = int(SteamAudioConfig::max_refl_duration * float(gs->audio_cfg.samplingRate));
