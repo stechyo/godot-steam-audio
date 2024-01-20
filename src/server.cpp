@@ -255,10 +255,22 @@ void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
 }
 
 void SteamAudioServer::add_static_mesh(IPLStaticMesh mesh) {
-	if (is_global_state_init) {
+	if (is_global_state_init.load()) {
 		iplStaticMeshAdd(mesh, global_state.scene);
 	} else {
 		meshes_to_add.push_back(mesh);
+	}
+}
+
+void SteamAudioServer::remove_static_mesh(IPLStaticMesh mesh) {
+	if (is_global_state_init.load()) {
+		iplStaticMeshRemove(mesh, global_state.scene);
+	} else {
+		// Probably won't happen?
+		auto it = std::find(meshes_to_add.begin(), meshes_to_add.end(), mesh);
+		if (it != meshes_to_add.end()) {
+			meshes_to_add.erase(it);
+		}
 	}
 }
 
