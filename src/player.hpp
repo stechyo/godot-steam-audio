@@ -66,8 +66,6 @@ public:
 
 	bool is_dist_attn_on();
 	void set_dist_attn_on(bool p_dist_attn_on);
-	bool is_ambisonics_on();
-	void set_ambisonics_on(bool p_ambisonics_on);
 	bool is_reflection_on();
 	void set_reflection_on(bool p_reflection_on);
 	bool is_occlusion_on();
