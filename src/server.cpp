@@ -163,13 +163,6 @@ void SteamAudioServer::tick() {
 	SteamAudio::log(SteamAudio::log_debug, "tick: done");
 }
 
-void SteamAudioServer::init_scene(IPLSceneSettings *scene_cfg) {
-	SteamAudio::log(SteamAudio::log_info, "Initializing SteamAudioServer scene");
-	IPLerror err = iplSceneCreate(global_state.ctx, scene_cfg, &global_state.scene);
-	handleErr(err);
-	global_state.scene = iplSceneRetain(global_state.scene);
-}
-
 GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	self->init_mux.lock();
 	if (self->is_global_state_init.load()) {
@@ -188,7 +181,10 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	global_state.ctx = create_ctx();
 
 	IPLSceneSettings scene_cfg = create_scene_cfg(global_state.ctx);
-	init_scene(&scene_cfg);
+	SteamAudio::log(SteamAudio::log_info, "Initializing SteamAudioServer scene");
+	IPLerror err = iplSceneCreate(global_state.ctx, &scene_cfg, &global_state.scene);
+	handleErr(err);
+	global_state.scene = iplSceneRetain(global_state.scene);
 	for (auto m : meshes_to_add) {
 		iplStaticMeshAdd(m, global_state.scene);
 	}

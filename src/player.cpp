@@ -5,9 +5,13 @@
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "server.hpp"
 #include "server_init.hpp"
+#include "steam_audio.hpp"
 #include "stream.hpp"
 
 void SteamAudioPlayer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("play_stream", "stream", "from_offset", "volume_db", "pitch_scale"), &SteamAudioPlayer::play_stream, DEFVAL(0), DEFVAL(0), DEFVAL(1.0));
+	ClassDB::bind_method(D_METHOD("get_inner_stream"), &SteamAudioPlayer::get_inner_stream);
+
 	ClassDB::bind_method(D_METHOD("is_dist_attn_on"), &SteamAudioPlayer::is_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("set_dist_attn_on", "p_dist_attn_on"), &SteamAudioPlayer::set_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("get_min_attenuation_distance"), &SteamAudioPlayer::get_min_attenuation_dist);
@@ -215,6 +219,48 @@ void SteamAudioPlayer::process_internal(double delta) {
 	if (is_playing() && !get_stream_playback().is_null()) {
 		pb = get_stream_playback();
 	}
+}
+
+void SteamAudioPlayer::play_stream(const Ref<AudioStream> &p_stream, float p_from_offset, float p_volume_db, float p_pitch_scale) {
+	if (p_stream.is_null()) {
+		SteamAudio::log(SteamAudio::log_warn, "Tried to play a null stream, won't play anything.");
+		return;
+	}
+
+	if (this->is_playing()) {
+		this->stop();
+	}
+	this->play();
+
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		SteamAudio::log(SteamAudio::log_warn,
+				"Tried to get an inner stream from a SteamAudioPlayer, but its outer stream is not a SteamAudioStream. Returning null.");
+		return;
+	}
+	str->set_stream(p_stream);
+
+	auto playback_ptr = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
+	if (playback_ptr == nullptr) {
+		SteamAudio::log(SteamAudio::log_warn,
+				"Tried to play a new stream on SteamAudioPlayer, but this player's outer stream was not a SteamAudioStream. Will not play anything.");
+		this->stop();
+		return;
+	}
+
+	playback_ptr->play_stream(p_stream, p_from_offset, p_volume_db, p_pitch_scale);
+}
+
+Ref<AudioStream> SteamAudioPlayer::get_inner_stream() {
+	auto str = dynamic_cast<SteamAudioStream *>(get_stream().ptr());
+	if (str == nullptr) {
+		SteamAudio::log(SteamAudio::log_warn,
+				"Tried to get an inner stream from a SteamAudioPlayer, but its outer stream is not a SteamAudioStream. Returning null.");
+		Ref<AudioStream> null_str;
+		return null_str;
+	}
+
+	return str->get_stream();
 }
 
 float SteamAudioPlayer::get_occlusion_radius() { return cfg.occ_radius; }

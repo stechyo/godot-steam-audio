@@ -24,6 +24,7 @@ Ref<AudioStreamPlayback> SteamAudioStream::_instantiate_playback() const {
 }
 
 void SteamAudioStream::set_stream(Ref<AudioStream> p_stream) { stream = p_stream; }
+Ref<AudioStream> SteamAudioStream::get_stream() { return this->stream; }
 
 // ----------------------------------------------------
 // SteamAudioStreamPlayback
