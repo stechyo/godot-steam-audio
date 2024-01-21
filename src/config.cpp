@@ -18,7 +18,7 @@ IPLSceneType SteamAudioConfig::scene_type = IPL_SCENETYPE_EMBREE; // TODO: suppo
 void SteamAudioConfig::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_global_log_level"), &SteamAudioConfig::get_global_log_level);
 	ClassDB::bind_method(D_METHOD("set_global_log_level", "p_global_log_level"), &SteamAudioConfig::set_global_log_level);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "global_log_level", PROPERTY_HINT_ENUM, "Debug,Info,Error"), "set_global_log_level", "get_global_log_level");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "global_log_level", PROPERTY_HINT_ENUM, "Debug,Info,Warning,Error"), "set_global_log_level", "get_global_log_level");
 
 	ADD_GROUP("Performance", "");
 	ClassDB::bind_method(D_METHOD("get_scene_type"), &SteamAudioConfig::get_scene_type);

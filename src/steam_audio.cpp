@@ -7,9 +7,15 @@ void SteamAudio::log(GodotSteamAudioLogLevel lvl, const char *str) {
 		return;
 	}
 
-	if (lvl < log_error) {
-		UtilityFunctions::print("[godot-steam-audio] ", str);
-	} else {
-		UtilityFunctions::push_error("[godot-steam-audio] ", str);
+	switch (lvl) {
+		case log_error:
+			UtilityFunctions::push_error("[godot-steam-audio] ", str);
+			return;
+		case log_warn:
+			UtilityFunctions::push_warning("[godot-steam-audio] ", str);
+			return;
+		default:
+			UtilityFunctions::print("[godot-steam-audio] ", str);
+			return;
 	}
 }

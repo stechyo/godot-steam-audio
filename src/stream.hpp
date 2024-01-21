@@ -29,6 +29,7 @@ public:
 
 	Ref<AudioStreamPlayback> _instantiate_playback() const override;
 	void set_stream(Ref<AudioStream> p_stream);
+	Ref<AudioStream> get_stream();
 
 	SteamAudioPlayer *parent;
 };

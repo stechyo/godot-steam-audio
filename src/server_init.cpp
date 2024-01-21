@@ -72,7 +72,7 @@ IPLSimulator create_simulator(IPLContext ctx, IPLAudioSettings audio_cfg, IPLSce
 }
 
 IPLSceneSettings create_scene_cfg(IPLContext ctx) {
-	IPLSceneSettings scene_cfg;
+	IPLSceneSettings scene_cfg = {};
 	scene_cfg.type = SteamAudioConfig::scene_type;
 	if (scene_cfg.type == IPL_SCENETYPE_EMBREE) {
 		IPLEmbreeDeviceSettings embree_cfg{};
@@ -81,12 +81,6 @@ IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 		handleErr(err);
 		scene_cfg.embreeDevice = embree_dev;
 	}
-	scene_cfg.closestHitCallback = nullptr;
-	scene_cfg.anyHitCallback = nullptr;
-	scene_cfg.batchedClosestHitCallback = nullptr;
-	scene_cfg.batchedAnyHitCallback = nullptr;
-	scene_cfg.userData = nullptr;
-	scene_cfg.radeonRaysDevice = nullptr;
 	return scene_cfg;
 }
 

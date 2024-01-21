@@ -71,6 +71,9 @@ public:
 	bool is_occlusion_on();
 	void set_occlusion_on(bool p_occlusion_on);
 
+	void play_stream(const Ref<AudioStream> &p_stream, float p_from_offset, float p_volume_db, float p_pitch_scale);
+	Ref<AudioStream> get_inner_stream();
+
 	PackedStringArray _get_configuration_warnings() const override;
 };
 
