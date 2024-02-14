@@ -5,6 +5,15 @@ into Godot 4.2. This adds sound effects such as occlusion and reverb into the en
 ### [Demo Video](https://www.youtube.com/watch?v=vRnzfnb93Gw)
 ![A picture of the editor screen with some godot-steam-audio nodes.](doc/imgs/editor.png)
 
+SteamAudio is a library made by Valve that improves aural immersion in games by adding effects such as
+rotational and positional tracking and real-time sound propagation (occlusion and reflection). It is used in
+[many games](https://steamdb.info/tech/SDK/Steam_Audio/), such as Counter-Strike 2 and Half-Life: Alyx, and
+Valve offers [official plugins](https://valvesoftware.github.io/steam-audio/downloads.html) for Unity, Unreal,
+and FMOD. This Godot extension is an unofficial plugin, but our end-goal is to offer the same features and
+allow Godot devs to use them in their games. Please note that, while this extension is open-source and
+MIT-licensed, SteamAudio is [proprietary software](https://github.com/ValveSoftware/steam-audio/issues/2), as
+per its [license](https://github.com/ValveSoftware/steam-audio/blob/master/LICENSE.md).
+
 This extension is in an alpha phase, will have bugs and missing polish, and may crash. Don't expect to be able
 to ship a game with this extension right now unless you are ready to make some fixes/optimizations to it on
 your own (and if you do, PRs are accepted). Linux and Windows are currently working. Mac probably works, but I
