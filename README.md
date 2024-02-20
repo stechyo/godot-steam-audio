@@ -10,8 +10,8 @@ rotational and positional tracking and real-time sound propagation (occlusion an
 [many games](https://steamdb.info/tech/SDK/Steam_Audio/), such as Counter-Strike 2 and Half-Life: Alyx, and
 Valve offers [official plugins](https://valvesoftware.github.io/steam-audio/downloads.html) for Unity, Unreal,
 and FMOD. This Godot extension is an unofficial plugin, but our end-goal is to offer the same features and
-allow Godot devs to use them in their games. Please note that, while this extension is open-source and
-MIT-licensed, SteamAudio is [proprietary software](https://github.com/ValveSoftware/steam-audio/issues/2), as
+allow Godot devs to use them in their games. This extension is open-source and
+MIT-licensed, while SteamAudio is Apache-licensed (but still open-source), as
 per its [license](https://github.com/ValveSoftware/steam-audio/blob/master/LICENSE.md).
 
 This extension is in an alpha phase, will have bugs and missing polish, and may crash. Don't expect to be able
