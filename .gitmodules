@@ -2,3 +2,6 @@
 	path = src/lib/godot-cpp
 	url = https://github.com/stechyo/godot-cpp
 	branch = gdext/steam-audio
+[submodule "src/lib/steamaudio"]
+	path = src/lib/steamaudio
+	url = https://github.com/ValveSoftware/steam-audio

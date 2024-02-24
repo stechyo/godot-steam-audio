@@ -12,7 +12,9 @@ Valve offers [official plugins](https://valvesoftware.github.io/steam-audio/down
 and FMOD. This Godot extension is an unofficial plugin, but our end-goal is to offer the same features and
 allow Godot devs to use them in their games. This extension is open-source and
 MIT-licensed, while SteamAudio is Apache-licensed (but still open-source), as
-per its [license](https://github.com/ValveSoftware/steam-audio/blob/master/LICENSE.md).
+per its [license](https://github.com/ValveSoftware/steam-audio/blob/master/LICENSE.md). Please note that
+SteamAudio does use proprietary libraries, and to get a fully open-source extension you'll need to explicitly
+compile everything by yourself to choose not to include them.
 
 This extension is in an alpha phase, will have bugs and missing polish, and may crash. Don't expect to be able
 to ship a game with this extension right now unless you are ready to make some fixes/optimizations to it on
