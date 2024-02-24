@@ -6,9 +6,9 @@ env.Append(CPPPATH=["src/"])
 
 if env.get("CC", "").lower() == "cl":
     # Building with MSVC
-    env.AppendUnique(CCFLAGS=("/I",  "src/lib/steamaudio/include/"))
+    env.AppendUnique(CCFLAGS=("/I",  "src/lib/steamaudio/unity/include/phonon/"))
 else:
-    env.AppendUnique(CCFLAGS=("-isystem",  "src/lib/steamaudio/include/"))
+    env.AppendUnique(CCFLAGS=("-isystem",  "src/lib/steamaudio/unity/include/phonon/"))
 
 sources = Glob("src/*.cpp")
 

@@ -2,6 +2,7 @@
 
 #include "config.hpp"
 #include "geometry.hpp"
+#include "geometry_dynamic.hpp"
 #include "listener.hpp"
 #include "material.hpp"
 #include "player.hpp"
@@ -25,6 +26,7 @@ void init_ext(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<SteamAudioStream>();
 		ClassDB::register_class<SteamAudioListener>();
 		ClassDB::register_class<SteamAudioGeometry>();
+		ClassDB::register_class<SteamAudioDynamicGeometry>();
 		ClassDB::register_class<SteamAudioMaterial>();
 		ClassDB::register_class<SteamAudioConfig>();
 		ClassDB::register_class<SteamAudioPlayer>();

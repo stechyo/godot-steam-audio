@@ -1,18 +1,22 @@
-#ifndef STEAM_AUDIO_GEOMETRY_H
-#define STEAM_AUDIO_GEOMETRY_H
+#ifndef STEAM_AUDIO_DYNAMIC_GEOMETRY_H
+#define STEAM_AUDIO_DYNAMIC_GEOMETRY_H
 
 #include "godot_cpp/classes/node3d.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
 #include "material.hpp"
 #include "phonon.h"
+#include <atomic>
 
 using namespace godot;
 
-class SteamAudioGeometry : public Node3D {
-	GDCLASS(SteamAudioGeometry, Node3D);
+class SteamAudioDynamicGeometry : public Node3D {
+	GDCLASS(SteamAudioDynamicGeometry, Node3D);
 
 private:
+	std::atomic_bool is_init;
+	IPLInstancedMesh mesh = nullptr;
+	IPLScene sub_scene = nullptr;
 	std::vector<IPLStaticMesh> meshes;
+
 	Ref<SteamAudioMaterial> mat;
 
 	void create_geometry();
@@ -24,19 +28,19 @@ protected:
 	static void _bind_methods();
 
 public:
-	bool disabled = false;
-
-	SteamAudioGeometry();
-	~SteamAudioGeometry();
-	void _ready() override;
+	SteamAudioDynamicGeometry();
+	~SteamAudioDynamicGeometry();
+	void ready_internal();
+	void process_internal(double delta);
+	void _notification(int p_what);
 
 	void recalculate();
+	void init_mesh();
+
 	Ref<SteamAudioMaterial> get_material();
 	void set_material(Ref<SteamAudioMaterial> p_material);
-	bool is_disabled() const { return disabled; }
-	void set_disabled(bool p_disabled);
 
 	PackedStringArray _get_configuration_warnings() const override;
 };
 
-#endif // STEAM_AUDIO_GEOMETRY_H
+#endif // STEAM_AUDIO_DYNAMIC_GEOMETRY_H

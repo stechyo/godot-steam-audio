@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ccrx8ia32qk3i"
+path="res://.godot/imported/circle_cut.obj-10ecb6a4652233c11a6435e07eafb306.mesh"
+
+[deps]
+
+files=["res://.godot/imported/circle_cut.obj-10ecb6a4652233c11a6435e07eafb306.mesh"]
+
+source_file="res://meshes/circle_cut.obj"
+dest_files=["res://.godot/imported/circle_cut.obj-10ecb6a4652233c11a6435e07eafb306.mesh", "res://.godot/imported/circle_cut.obj-10ecb6a4652233c11a6435e07eafb306.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
