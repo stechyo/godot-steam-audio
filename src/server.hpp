@@ -27,7 +27,9 @@ private:
 	std::mutex refl_mux;
 	std::condition_variable cv;
 
-	std::vector<IPLStaticMesh> meshes_to_add;
+	// meshes to add to the global state scene after it's initialized.
+	std::vector<IPLStaticMesh> static_meshes_to_add;
+	std::vector<IPLStaticMesh> dynamic_meshes_to_add;
 
 	// TODO: allow for multiple
 	SteamAudioListener *listener;
@@ -52,6 +54,8 @@ public:
 	void remove_local_state(LocalSteamAudioState *ls);
 	void add_static_mesh(IPLStaticMesh mesh);
 	void remove_static_mesh(IPLStaticMesh mesh);
+	void add_dynamic_mesh(IPLInstancedMesh mesh);
+	void remove_dynamic_mesh(IPLInstancedMesh mesh);
 
 	void tick();
 };

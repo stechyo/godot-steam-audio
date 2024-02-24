@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bilxmr83dwsgw"]
+[gd_scene load_steps=41 format=3 uid="uid://bilxmr83dwsgw"]
 
 [ext_resource type="Script" path="res://src/player.gd" id="1_c2adp"]
 [ext_resource type="SteamAudioMaterial" uid="uid://dbai50r63k346" path="res://addons/godot-steam-audio/materials/rock_material.tres" id="1_wtcfy"]
@@ -9,6 +9,7 @@
 [ext_resource type="SteamAudioMaterial" uid="uid://cexuij8fef5ay" path="res://addons/godot-steam-audio/materials/carpet_material.tres" id="6_ph4pe"]
 [ext_resource type="Script" path="res://src/random_pluck.gd" id="7_gx8pe"]
 [ext_resource type="Script" path="res://src/door.gd" id="8_jqgel"]
+[ext_resource type="PackedScene" uid="uid://b4t303yij1i0s" path="res://scenes/dynamic_test.tscn" id="10_nroe5"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nkwlr"]
 
@@ -177,6 +178,7 @@ environment = SubResource("Environment_gdnyc")
 camera_attributes = SubResource("CameraAttributesPhysical_v0408")
 
 [node name="SteamAudioConfig" type="SteamAudioConfig" parent="."]
+scene_type = 0
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(200, 0, 0, 0, 200, 0, 0, 0, 200, 0, 0, 0)
@@ -455,3 +457,5 @@ text = "[WASD] Move
 [2] Move door"
 fit_content = true
 scroll_active = false
+
+[node name="RotationTest" parent="." instance=ExtResource("10_nroe5")]

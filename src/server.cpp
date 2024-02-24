@@ -181,11 +181,10 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	global_state.ctx = create_ctx();
 
 	IPLSceneSettings scene_cfg = create_scene_cfg(global_state.ctx);
-	SteamAudio::log(SteamAudio::log_info, "Initializing SteamAudioServer scene");
 	IPLerror err = iplSceneCreate(global_state.ctx, &scene_cfg, &global_state.scene);
 	handleErr(err);
 	global_state.scene = iplSceneRetain(global_state.scene);
-	for (auto m : meshes_to_add) {
+	for (auto m : static_meshes_to_add) {
 		iplStaticMeshAdd(m, global_state.scene);
 	}
 
@@ -197,7 +196,6 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	global_state.ambi_dec_effect = create_ambisonics_decode_effect(
 			global_state.ctx, global_state.audio_cfg, global_state.hrtf);
 
-	SteamAudio::log(SteamAudio::log_info, "Setting SteamAudio simulator scene");
 	iplSimulatorSetScene(global_state.sim, global_state.scene);
 	iplSimulatorCommit(global_state.sim);
 
@@ -254,7 +252,7 @@ void SteamAudioServer::add_static_mesh(IPLStaticMesh mesh) {
 	if (is_global_state_init.load()) {
 		iplStaticMeshAdd(mesh, global_state.scene);
 	} else {
-		meshes_to_add.push_back(mesh);
+		static_meshes_to_add.push_back(mesh);
 	}
 }
 
@@ -263,11 +261,27 @@ void SteamAudioServer::remove_static_mesh(IPLStaticMesh mesh) {
 		iplStaticMeshRemove(mesh, global_state.scene);
 	} else {
 		// Probably won't happen?
-		auto it = std::find(meshes_to_add.begin(), meshes_to_add.end(), mesh);
-		if (it != meshes_to_add.end()) {
-			meshes_to_add.erase(it);
+		auto it = std::find(static_meshes_to_add.begin(), static_meshes_to_add.end(), mesh);
+		if (it != static_meshes_to_add.end()) {
+			static_meshes_to_add.erase(it);
 		}
 	}
+}
+
+void SteamAudioServer::add_dynamic_mesh(IPLInstancedMesh mesh) {
+	if (is_global_state_init.load()) {
+		iplInstancedMeshAdd(mesh, global_state.scene);
+	} else {
+		SteamAudio::log(SteamAudio::log_error, "Adding a dynamic mesh, but SteamAudio is not initialized. Probably crashing soon.");
+	}
+}
+
+void SteamAudioServer::remove_dynamic_mesh(IPLInstancedMesh mesh) {
+	if (!is_global_state_init.load()) {
+		return; // We've probably already deleted the scene.
+	}
+
+	iplInstancedMeshRemove(mesh, global_state.scene);
 }
 
 SteamAudioServer::SteamAudioServer() {

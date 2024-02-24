@@ -76,9 +76,10 @@ IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 	scene_cfg.type = SteamAudioConfig::scene_type;
 	if (scene_cfg.type == IPL_SCENETYPE_EMBREE) {
 		IPLEmbreeDeviceSettings embree_cfg{};
-		IPLEmbreeDevice embree_dev;
-		IPLerror err = iplEmbreeDeviceCreate(ctx, &embree_cfg, &embree_dev);
-		handleErr(err);
+		if (embree_dev == nullptr) {
+			IPLerror err = iplEmbreeDeviceCreate(ctx, &embree_cfg, &embree_dev);
+			handleErr(err);
+		}
 		scene_cfg.embreeDevice = embree_dev;
 	}
 	return scene_cfg;

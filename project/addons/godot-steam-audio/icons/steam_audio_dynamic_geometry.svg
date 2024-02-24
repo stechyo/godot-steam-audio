@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="16"
+   width="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="steam_audio_dynamic_geometry.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="64"
+     inkscape:cx="11.945313"
+     inkscape:cy="8.34375"
+     inkscape:window-width="2560"
+     inkscape:window-height="1355"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 7.2636322,3.2288011 12.48688,5.8324177 V 11.039651 L 7.2636322,13.643268 2.0403851,11.039651 V 5.8324177 Z m 0,10.4144669 V 8.4360343 L 12.48688,5.8324177 M 7.2636322,8.4360343 2.0403851,5.8324177"
+     fill="none"
+     stroke-width="1.73841"
+     stroke="#fc7f7f"
+     id="path1"
+     style="stroke:#f92249;stroke-opacity:1" />
+  <path
+     d="M 8.0630211,2.8303321 13.286268,5.4339487 V 10.641182 L 8.0630211,13.244798 2.839774,10.641182 V 5.4339487 Z m 0,10.4144659 V 8.0375653 L 13.286268,5.4339487 M 8.0630211,8.0375653 2.839774,5.4339487"
+     fill="none"
+     stroke-width="1.73841"
+     stroke="#fc7f7f"
+     id="path2"
+     style="stroke:#f92249;stroke-opacity:0.30000001" />
+  <path
+     d="M 8.7527976,2.4865012 13.976045,5.0901178 V 10.29735 L 8.7527976,12.900967 3.5295504,10.29735 V 5.0901178 Z m 0,10.4144658 V 7.6937345 L 13.976045,5.0901178 M 8.7527976,7.6937345 3.5295504,5.0901178"
+     fill="none"
+     stroke-width="1.73841"
+     stroke="#fc7f7f"
+     id="path3"
+     style="stroke:#f92249;stroke-opacity:0.30000001" />
+</svg>

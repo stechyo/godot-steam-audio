@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://6sgtpvtg5aic"]
 
-[ext_resource type="SteamAudioMaterial" uid="uid://oyakg0idhulv" path="res://addons/steamaudio/materials/wood_material.tres" id="2_lm25q"]
+[ext_resource type="SteamAudioMaterial" uid="uid://oyakg0idhulv" path="res://addons/godot-steam-audio/materials/wood_material.tres" id="2_lm25q"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xa5je"]
 albedo_color = Color(0.203922, 0.0901961, 0, 1)
