@@ -12,8 +12,8 @@ release:
 	mkdir godot-steam-audio-demo
 	mkdir godot-steam-audio
 	cp -r ./project/* ./godot-steam-audio-demo
-	rm -rI ./godot-steam-audio-demo/addons/godot-steam-audio/bin/libphonon.so
+	rm -r ./godot-steam-audio-demo/addons/godot-steam-audio/bin/libphonon.so.dbg
 	cp -r ./godot-steam-audio-demo/addons ./godot-steam-audio
 	zip -r ./godot-steam-audio-vX.Y.Z.zip godot-steam-audio README.md
 	zip -r ./godot-steam-audio-demo-vX.Y.Z.zip godot-steam-audio-demo README.md
-	rm -rI ./godot-steam-audio ./godot-steam-audio-demo
+	rm -r ./godot-steam-audio ./godot-steam-audio-demo
