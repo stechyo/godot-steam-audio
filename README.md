@@ -26,10 +26,10 @@ don't have the time nor the money to support that, sorry.
  - Occlusion and transmission through geometry 
  - Distance attenuation
  - Reflections (reverb)
+ - Dynamic geometry
 
  To come: 
  - More editor configuration
- - Dynamic geometry
  - Baked scenes for higher-performance reflections
  - More raycasting support
 
