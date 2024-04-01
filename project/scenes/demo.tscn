@@ -178,7 +178,6 @@ environment = SubResource("Environment_gdnyc")
 camera_attributes = SubResource("CameraAttributesPhysical_v0408")
 
 [node name="SteamAudioConfig" type="SteamAudioConfig" parent="."]
-scene_type = 0
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(200, 0, 0, 0, 200, 0, 0, 0, 200, 0, 0, 0)
