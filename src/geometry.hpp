@@ -20,6 +20,8 @@ private:
 	void register_geometry();
 	void unregister_geometry();
 
+	void ready_internal();
+
 protected:
 	static void _bind_methods();
 
@@ -28,7 +30,7 @@ public:
 
 	SteamAudioGeometry();
 	~SteamAudioGeometry();
-	void _ready() override;
+	void _notification(int p_what);
 
 	void recalculate();
 	Ref<SteamAudioMaterial> get_material();

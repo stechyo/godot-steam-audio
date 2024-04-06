@@ -24,14 +24,15 @@ private:
 	void register_geometry();
 	void unregister_geometry();
 
+	void ready_internal();
+	void process_internal(double delta);
+
 protected:
 	static void _bind_methods();
 
 public:
 	SteamAudioDynamicGeometry();
 	~SteamAudioDynamicGeometry();
-	void ready_internal();
-	void process_internal(double delta);
 	void _notification(int p_what);
 
 	void recalculate();

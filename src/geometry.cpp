@@ -29,13 +29,21 @@ SteamAudioGeometry::~SteamAudioGeometry() {
 	destroy_geometry();
 }
 
-void SteamAudioGeometry::_ready() {
+void SteamAudioGeometry::ready_internal() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
 	create_geometry();
 	register_geometry();
+}
+
+void SteamAudioGeometry::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE:
+			ready_internal();
+			break;
+	}
 }
 
 void SteamAudioGeometry::set_disabled(bool p_disabled) {
