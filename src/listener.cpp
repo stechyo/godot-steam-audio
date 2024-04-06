@@ -21,7 +21,7 @@ void SteamAudioListener::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "reflection_ambisonics_order", PROPERTY_HINT_RANGE, "0,5,1"), "set_refl_ambisonics_order", "get_refl_ambisonics_order");
 }
 
-void SteamAudioListener::_ready() {
+void SteamAudioListener::ready_internal() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
@@ -36,6 +36,14 @@ void SteamAudioListener::_ready() {
 		num_refl_rays = SteamAudioConfig::max_num_refl_rays;
 	}
 	SteamAudioServer::get_singleton()->add_listener(this);
+}
+
+void SteamAudioListener::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE:
+			ready_internal();
+			break;
+	}
 }
 
 SteamAudioListener::SteamAudioListener() {}

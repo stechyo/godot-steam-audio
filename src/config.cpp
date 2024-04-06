@@ -61,21 +61,33 @@ void SteamAudioConfig::_bind_methods() {
 SteamAudioConfig::SteamAudioConfig() {}
 SteamAudioConfig::~SteamAudioConfig() {}
 
-void SteamAudioConfig::_ready() {
+void SteamAudioConfig::ready_internal() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
 	// Initialize global state
 	SteamAudioServer::get_singleton()->get_global_state();
+	set_physics_process(true);
 }
 
-void SteamAudioConfig::_physics_process(double delta) {
+void SteamAudioConfig::process_internal(double delta) {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
 	SteamAudioServer::get_singleton()->tick();
+}
+
+void SteamAudioConfig::_notification(int p_what) {
+	switch (p_what) {
+		case NOTIFICATION_ENTER_TREE:
+			ready_internal();
+			break;
+		case NOTIFICATION_PHYSICS_PROCESS:
+			process_internal(get_physics_process_delta_time());
+			break;
+	}
 }
 
 SteamAudio::GodotSteamAudioLogLevel SteamAudioConfig::get_global_log_level() { return log_level; }

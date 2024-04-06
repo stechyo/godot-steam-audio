@@ -17,13 +17,16 @@ private:
 	int refl_ambisonics_order = 1;
 	float irradiance_min_dist = 1.0f;
 
+	void ready_internal();
+
 protected:
 	static void _bind_methods();
 
 public:
-	void _ready() override;
 	SteamAudioListener();
 	~SteamAudioListener();
+
+	void _notification(int p_what);
 
 	int get_num_refl_rays();
 	void set_num_refl_rays(int p_num_refl_rays);

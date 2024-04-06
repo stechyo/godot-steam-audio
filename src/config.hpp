@@ -17,6 +17,9 @@ class SteamAudioConfig : public Node3D {
 private:
 	std::vector<IPLStaticMesh> meshes;
 
+	void process_internal(double delta);
+	void ready_internal();
+
 protected:
 	static void _bind_methods();
 
@@ -34,8 +37,7 @@ public:
 
 	SteamAudioConfig();
 	~SteamAudioConfig();
-	void _ready() override;
-	void _physics_process(double delta) override;
+	void _notification(int p_what);
 
 	SteamAudio::GodotSteamAudioLogLevel get_global_log_level();
 	void set_global_log_level(SteamAudio::GodotSteamAudioLogLevel p_global_log_level);
