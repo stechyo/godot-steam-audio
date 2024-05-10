@@ -12,13 +12,19 @@ else:
 
 sources = Glob("src/*.cpp")
 
+steam_audio_lib_path = env.get("STEAM_AUDIO_LIB_PATH", "")
+if steam_audio_lib_path == "":
+    steam_audio_lib_path = "src/lib/steamaudio/lib"
+
 if env["platform"] == "linux":
-    env.Append(LIBPATH=["src/lib/steamaudio/lib/linux-x64"])
+    env.Append(LIBPATH=[f'{steam_audio_lib_path}/linux-x64'])
     env.Append(LIBS=["libphonon.so"])
 elif env["platform"] == "windows":
-    env.Append(LIBPATH=["src/lib/steamaudio/lib/windows-x64"])
+    env.Append(LIBPATH=[f'{steam_audio_lib_path}/windows-x64'])
     env.Append(LIBS=["phonon"])
-
+elif env["platform"] == "macos":
+    env.Append(LIBPATH=[f'{steam_audio_lib_path}/osx'])
+    env.Append(LIBS=["libphonon.dylib"])
 
 library = env.SharedLibrary(
     "project/addons/godot-steam-audio/bin/godot-steam-audio{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),

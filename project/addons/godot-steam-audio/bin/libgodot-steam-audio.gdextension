@@ -11,8 +11,8 @@ linux.debug.arm64 = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.lin
 linux.release.arm64 = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.linux.template_release.arm64.so"
 windows.x86_64.debug = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.windows.template_debug.x86_64.dll"
 windows.x86_64.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.windows.template_release.x86_64.dll"
-macos.debug = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.macos.template_debug.framework"
-macos.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.macos.template_release.framework"
+macos.debug = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.macos.template_debug.universal.dylib"
+macos.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.macos.template_release.universal.dylib"
 
 [icons]
 
