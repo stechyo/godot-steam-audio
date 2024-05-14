@@ -12,9 +12,7 @@ else:
 
 sources = Glob("src/*.cpp")
 
-steam_audio_lib_path = env.get("STEAM_AUDIO_LIB_PATH", "")
-if steam_audio_lib_path == "":
-    steam_audio_lib_path = "src/lib/steamaudio/lib"
+steam_audio_lib_path = env.get("STEAM_AUDIO_LIB_PATH", "src/lib/steamaudio/lib")
 
 if env["platform"] == "linux":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/linux-x64'])
