@@ -52,6 +52,7 @@ public:
 	~SteamAudioStreamPlayback();
 
 	void set_stream(Ref<AudioStream> p_stream);
+	Ref<AudioStreamPlayback> get_stream_playback();
 
 	virtual int32_t _mix(AudioFrame *buffer, double rate_scale,
 			int32_t frames) override;
