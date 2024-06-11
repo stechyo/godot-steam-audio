@@ -183,3 +183,4 @@ void SteamAudioStreamPlayback::_stop() {
 
 bool SteamAudioStreamPlayback::_is_playing() const { return is_active; }
 void SteamAudioStreamPlayback::set_stream(Ref<AudioStream> p_stream) { stream = p_stream; }
+Ref<AudioStreamPlayback> SteamAudioStreamPlayback::get_stream_playback() { return this->stream_playback; }

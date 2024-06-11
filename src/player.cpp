@@ -11,6 +11,7 @@
 void SteamAudioPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("play_stream", "stream", "from_offset", "volume_db", "pitch_scale"), &SteamAudioPlayer::play_stream, DEFVAL(0), DEFVAL(0), DEFVAL(1.0));
 	ClassDB::bind_method(D_METHOD("get_inner_stream"), &SteamAudioPlayer::get_inner_stream);
+	ClassDB::bind_method(D_METHOD("get_inner_stream_playback"), &SteamAudioPlayer::get_inner_stream_playback);
 
 	ClassDB::bind_method(D_METHOD("is_dist_attn_on"), &SteamAudioPlayer::is_dist_attn_on);
 	ClassDB::bind_method(D_METHOD("set_dist_attn_on", "p_dist_attn_on"), &SteamAudioPlayer::set_dist_attn_on);
@@ -261,6 +262,18 @@ Ref<AudioStream> SteamAudioPlayer::get_inner_stream() {
 	}
 
 	return str->get_stream();
+}
+
+Ref<AudioStreamPlayback> SteamAudioPlayer::get_inner_stream_playback() {
+	auto spb = dynamic_cast<SteamAudioStreamPlayback *>(get_stream_playback().ptr());
+	if (spb == nullptr) {
+		SteamAudio::log(SteamAudio::log_warn,
+				"Tried to get an inner stream playback from a SteamAudioPlayer, but its outer stream playback is not a SteamAudioStreamPlayback (or the player may not be playing audio). Returning null.");
+		Ref<AudioStream> null_pb;
+		return null_pb;
+	}
+
+	return spb->get_stream_playback();
 }
 
 float SteamAudioPlayer::get_occlusion_radius() { return cfg.occ_radius; }
