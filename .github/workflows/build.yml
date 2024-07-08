@@ -27,8 +27,8 @@ jobs:
           # download steamaudio 
           curl -LO https://github.com/ValveSoftware/steam-audio/releases/download/v4.5.3/steamaudio_4.5.3.zip
           unzip steamaudio_4.5.3.zip 'steamaudio/lib/**/*' -d src/lib
-          cp src/lib/steamaudio/lib/linux-x64/* project/addons/godot-steam-audio/
-          cp src/lib/steamaudio/lib/windows-x64/* project/addons/godot-steam-audio/
+          cp src/lib/steamaudio/lib/linux-x64/* project/addons/godot-steam-audio/bin/
+          cp src/lib/steamaudio/lib/windows-x64/* project/addons/godot-steam-audio/bin/
       - name: build-ext
         run: |
           make release 
