@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioDynamicGeometry" inherits="Node3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Dynamic geometry that will affect SteamAudio simulation.
+	</brief_description>
+	<description>
+        This node will attempt to get a mesh from its parent at [code]_ready()[/code] and add it to the internal SteamAudio scene. Adding a node after the game has started probably works, but it is not supported. If this object isn't going to move, then just use [SteamAudioGeometry].
+
+		This node can extract meshes from the following nodes:
+		- [MeshInstance3D]
+		- [CollisionShape3D], [b]if its shape is one of[/b]:
+			- [BoxShape3D]
+			- [CylinderShape3D]
+			- [CapsuleShape3D]
+			- [SphereShape3D]
+			- [ConcavePolygonShape3D]
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="recalculate">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="material" type="SteamAudioMaterial" setter="set_material" getter="get_material">
+			The geometry's material.
+		</member>
+	</members>
+</class>

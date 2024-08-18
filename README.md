@@ -1,6 +1,6 @@
 # godot-steam-audio
 This is a GDExtension that integrates the [steam-audio](https://valvesoftware.github.io/steam-audio/) library
-into Godot 4.2. This adds sound effects such as occlusion and reverb into the engine.
+into Godot 4.3. This adds sound effects such as occlusion and reverb into the engine.
 
 ### [Demo Video](https://www.youtube.com/watch?v=vRnzfnb93Gw)
 ![A picture of the editor screen with some godot-steam-audio nodes.](doc/imgs/editor.png)

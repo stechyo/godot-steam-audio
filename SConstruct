@@ -24,6 +24,10 @@ elif env["platform"] == "macos":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/osx'])
     env.Append(LIBS=["libphonon.dylib"])
 
+if env["target"] in ["editor", "template_debug"]:
+    doc_data = env.GodotCPPDocData("src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
+    sources.append(doc_data)
+
 library = env.SharedLibrary(
     "project/addons/godot-steam-audio/bin/godot-steam-audio{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
     source=sources,

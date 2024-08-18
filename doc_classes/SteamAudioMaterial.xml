@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioMaterial" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		The acoustic properties of a surface.
+	</brief_description>
+	<description>
+		This resource is a Godot translation of [url=https://valvesoftware.github.io/steam-audio/doc/capi/scene.html?highlight=iplmaterial#_CPPv411IPLMaterial]IPLMaterial[/url]. Low, middle, and high refer to frequency bands with center frequencies of 400Hz, 2.5kHz and 15kHz.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="absorption_high" type="float" setter="set_absorption_high" getter="get_absorption_high" default="0.0">
+			Fraction of sound energy absorbed at high frequencies.
+		</member>
+		<member name="absorption_low" type="float" setter="set_absorption_low" getter="get_absorption_low" default="0.0">
+			Fraction of sound energy absorbed at low frequencies.
+		</member>
+		<member name="absorption_mid" type="float" setter="set_absorption_mid" getter="get_absorption_mid" default="0.0">
+			Fraction of sound energy absorbed at mid frequencies.
+		</member>
+		<member name="scattering" type="float" setter="set_scattering" getter="get_scattering" default="0.0">
+			Fraction of sound energy scattered in a random direction when reflecting.
+		</member>
+		<member name="transmission_high" type="float" setter="set_transmission_high" getter="get_transmission_high" default="0.0">
+			Fraction of sound energy absorbed at high frequencies.
+		</member>
+		<member name="transmission_low" type="float" setter="set_transmission_low" getter="get_transmission_low" default="0.0">
+			Fraction of sound energy absorbed at low frequencies.
+		</member>
+		<member name="transmission_mid" type="float" setter="set_transmission_mid" getter="get_transmission_mid" default="0.0">
+			Fraction of sound energy absorbed at mid frequencies.
+		</member>
+	</members>
+</class>

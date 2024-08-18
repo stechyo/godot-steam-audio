@@ -2,6 +2,7 @@
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/project_settings.hpp"
 #include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/callable_method_pointer.hpp"
 #include "phonon.h"
 #include "server_init.hpp"
@@ -208,7 +209,7 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 }
 
 void SteamAudioServer::start_refl_sim() {
-	refl_thread.start(callable_mp(this, &SteamAudioServer::run_refl_sim));
+	refl_thread->start(callable_mp(this, &SteamAudioServer::run_refl_sim));
 }
 
 void SteamAudioServer::run_refl_sim() {
@@ -290,11 +291,13 @@ SteamAudioServer::SteamAudioServer() {
 	is_refl_thread_processing.store(false);
 	is_running.store(true);
 	local_states_have_changed.store(false);
+	refl_thread = memnew(Thread);
 }
 
 SteamAudioServer::~SteamAudioServer() {
 	is_running.store(false);
-	refl_thread.wait_to_finish();
+	refl_thread->wait_to_finish();
+	memdelete(refl_thread);
 
 	if (!self->is_global_state_init.load()) {
 		return;
