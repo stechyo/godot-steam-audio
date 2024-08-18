@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "geometry.hpp"
 #include "geometry_dynamic.hpp"
+#include "godot_cpp/core/memory.hpp"
 #include "listener.hpp"
 #include "material.hpp"
 #include "player.hpp"
@@ -15,6 +16,8 @@
 #include <godot_cpp/godot.hpp>
 
 using namespace godot;
+
+SteamAudioServer *srv;
 
 void init_ext(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE && p_level != MODULE_INITIALIZATION_LEVEL_SERVERS) {
@@ -34,13 +37,15 @@ void init_ext(ModuleInitializationLevel p_level) {
 
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
 		GDREGISTER_CLASS(SteamAudioServer);
-		auto sa = memnew(SteamAudioServer);
+		srv = memnew(SteamAudioServer);
 	}
 }
 
 void uninit_ext(ModuleInitializationLevel p_level) {
-	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE && p_level != MODULE_INITIALIZATION_LEVEL_SERVERS) {
-		return;
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
+		// Should call this to not leak, but thread->wait_for_finish() crashes...
+		// the program is exiting anyway so I'm not too concerned
+		// memdelete(srv);
 	}
 }
 

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioPlayer" inherits="AudioStreamPlayer3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		This player's transform is used as the audio source transform in the SteamAudio simulation.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_inner_stream">
+			<return type="AudioStream" />
+			<description>
+				Returns the player's inner [AudioStream]
+			</description>
+		</method>
+		<method name="get_inner_stream_playback">
+			<return type="AudioStreamPlayback" />
+			<description>
+				Returns the player's inner [AudioStreamPlayback]
+			</description>
+		</method>
+		<method name="play_stream">
+			<return type="void" />
+			<param index="0" name="stream" type="AudioStream" />
+			<param index="1" name="from_offset" type="float" default="0" />
+			<param index="2" name="volume_db" type="float" default="0" />
+			<param index="3" name="pitch_scale" type="float" default="1.0" />
+			<description>
+				Plays the given stream starting at from_offset, at the defined volume and pitch scale.
+            [b]A very important note[/b]: play_stream is what you want to use if you'd like to change a SteamAudioPlayer's stream at runtime. Do not try to set the player's stream directly through set_stream, as that will disable all SteamAudio effects for that player. At runtime, the stream you've configured will be replaced with a [SteamAudioStream]. This stream has an inner stream which corresponds to what you configured in the scene.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="ambisonics_order" type="int" setter="set_ambisonics_order" getter="get_ambisonics_order" default="1">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/ambisonics-encode-effect.html#_CPPv4N31IPLAmbisonicsEncodeEffectParams5orderE]IPLAmbisonicsEncodeEffectParams.order[/url].
+		</member>
+		<member name="distance_attenuation" type="bool" setter="set_dist_attn_on" getter="is_dist_attn_on" default="false">
+            Whether SteamAudio distance attenuation is enabled. Keep in mind that this is disabled by default, and enabling it will disable Godot's built-in attenuation, which you can only re-enable when you disable this.
+		</member>
+		<member name="max_reflection_distance" type="float" setter="set_max_reflection_distance" getter="get_max_reflection_distance" default="10000.0">
+            The maximum distance from the listener at which reflection simulation is run for this audio source. Keep in mind that this does not disable reflection if it has already been simulated, it just doesn't update the effect.
+		</member>
+		<member name="min_attenuation_distance" type="float" setter="set_min_attenuation_distance" getter="get_min_attenuation_distance" default="0.0">
+            See
+            [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N27IPLDistanceAttenuationModel11minDistanceE]IPLDistanceAttenuationModel.minDistance[/url], and note the distance attenuation type in godot-steam-audio is always [code]IPL_DISTANCEATTENUATIONTYPE_INVERSEDISTANCE[/code].
+		</member>
+		<member name="occlusion" type="bool" setter="set_occlusion_on" getter="is_occlusion_on" default="true">
+			Whether SteamAudio occlusion and transmission is enabled.
+		</member>
+		<member name="occlusion_radius" type="float" setter="set_occlusion_radius" getter="get_occlusion_radius" default="4.0">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N19IPLSimulationInputs15occlusionRadiusE]IPLSimulationInputs.occlusionRadius[/url].
+		</member>
+		<member name="occlusion_samples" type="int" setter="set_occlusion_samples" getter="get_occlusion_samples" default="32">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N19IPLSimulationInputs19numOcclusionSamplesE]IPLSimulationInputs.numOcclusionSamples.
+		</member>
+		<member name="reflection" type="bool" setter="set_reflection_on" getter="is_reflection_on" default="false">
+			Whether SteamAudio reflection is on.
+		</member>
+		<member name="transmission_rays" type="int" setter="set_transmission_rays" getter="get_transmission_rays" default="16">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N19IPLSimulationInputs19numTransmissionRaysE]IPLSimulationInputs.numTransmissionRays[/url].
+		</member>
+	</members>
+</class>

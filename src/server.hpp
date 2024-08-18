@@ -32,12 +32,12 @@ private:
 	std::vector<IPLStaticMesh> dynamic_meshes_to_add;
 
 	// TODO: allow for multiple
-	SteamAudioListener *listener;
+	SteamAudioListener *listener = nullptr;
 
 	void init_scene(IPLSceneSettings *scene_cfg);
 	void start_refl_sim();
 	void run_refl_sim();
-	Thread refl_thread = Thread();
+	Thread *refl_thread = nullptr;
 
 protected:
 	static void _bind_methods();

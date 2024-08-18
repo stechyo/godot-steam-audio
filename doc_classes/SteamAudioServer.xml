@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioServer" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		This is a singleton that handles all SteamAudio global state. You should not interact with it directly.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_singleton" qualifiers="static">
+			<return type="SteamAudioServer" />
+			<description>
+			</description>
+		</method>
+		<method name="tick">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

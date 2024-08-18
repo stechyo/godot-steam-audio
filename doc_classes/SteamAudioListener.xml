@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioListener" inherits="Node3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		This node's transform is used for simulating the listener's transform in the SteamAudio simulation. You'll likely want to have this as a child of your [Camera3D].
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="irradiance_min_distance" type="float" setter="set_irradiance_min_dist" getter="get_irradiance_min_dist" default="1.0">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N25IPLSimulationSharedInputs21irradianceMinDistanceE]IPLSimulationSharedInputs.irradianceMinDistance[/url]
+		</member>
+		<member name="reflection_ambisonics_order" type="int" setter="set_refl_ambisonics_order" getter="get_refl_ambisonics_order" default="1">
+			May be overriden by [SteamAudioConfig] - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N25IPLSimulationSharedInputs5orderE]IPLSimulationSharedInputs.order[/url]
+		</member>
+		<member name="reflection_bounces" type="int" setter="set_num_refl_bounces" getter="get_num_refl_bounces" default="16">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N25IPLSimulationSharedInputs10numBouncesE]IPLSimulationSharedInputs.numBounces[/url]
+		</member>
+		<member name="reflection_duration" type="float" setter="set_refl_duration" getter="get_refl_duration" default="2.0">
+			May be overriden by [SteamAudioConfig] - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N25IPLSimulationSharedInputs8durationE]IPLSimulationSharedInputs.duration[/url]
+		</member>
+		<member name="reflection_rays" type="int" setter="set_num_refl_rays" getter="get_num_refl_rays" default="4096">
+			May be overriden by [SteamAudioConfig] - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N25IPLSimulationSharedInputs7numRaysE]IPLSimulationSharedInputs.numRays[/url]
+		</member>
+	</members>
+</class>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioStream" inherits="AudioStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+        You do not need to, and [b]should not[/b] assign this stream to your [SteamAudioPlayer], as the extension handles that for you.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+</class>

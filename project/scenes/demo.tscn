@@ -46,9 +46,7 @@ material = SubResource("StandardMaterial3D_dg8l6")
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_w72gs"]
 streams_count = 2
 stream_0/stream = ExtResource("5_00edw")
-stream_0/weight = 1.0
 stream_1/stream = ExtResource("6_dw5dv")
-stream_1/weight = 1.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyn86"]
 albedo_color = Color(0.976471, 0.133333, 0.286275, 1)

@@ -9,3 +9,4 @@ project/addons/godot-steam-audio/bin/*.ilk
 project/addons/godot-steam-audio/bin/*.exp
 project/addons/godot-steam-audio/bin/*.lib
 project/addons/godot-steam-audio/bin/*.dylib
+src/gen/*

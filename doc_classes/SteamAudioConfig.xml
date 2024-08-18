@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SteamAudioConfig" inherits="Node3D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+		This node makes [SteamAudioServer] tick. You must have one, and only one, instance of it in your scene if you'd like the extension to do anything.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="diffuse_samples" type="int" setter="set_num_diffuse_samples" getter="get_num_diffuse_samples" default="32">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings17numDiffuseSamplesE]IPLSimulationSettings.numDiffuseSamples[/url]
+		</member>
+		<member name="global_log_level" type="int" setter="set_global_log_level" getter="get_global_log_level" enum="SteamAudio.GodotSteamAudioLogLevel" default="1">
+			The global log level for this extension. Setting it to a lower level will show more logs.
+		</member>
+		<member name="hrtf_volume" type="float" setter="set_hrtf_volume" getter="get_hrtf_volume" default="1.0">
+			Audio volume (see [url=https://valvesoftware.github.io/steam-audio/doc/capi/hrtf.html#_CPPv4N15IPLHRTFSettings6volumeE]IPLHRTFSettings.volume[/url])
+		</member>
+		<member name="max_ambisonics_order" type="int" setter="set_max_ambisonics_order" getter="get_max_ambisonics_order" default="1">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings8maxOrderE]IPLSimulationSettings.maxOrder[/url]
+		</member>
+		<member name="max_occlusion_samples" type="int" setter="set_max_num_occ_samples" getter="get_max_num_occ_samples" default="64">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings22maxNumOcclusionSamplesE]IPLSimulationSettings.maxNumOcclusionSamples[/url]
+		</member>
+		<member name="max_reflection_duration" type="float" setter="set_max_refl_duration" getter="get_max_refl_duration" default="2.0">
+            Higher values will result in more realistic reflections, but this will impact performance - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings11maxDurationE]IPLSimulationSettings.maxDuration[/url]
+		</member>
+		<member name="max_reflection_rays" type="int" setter="set_max_num_refl_rays" getter="get_max_num_refl_rays" default="4096">
+            Overrides each source's max_reflection_rays setting - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings10maxNumRaysE]IPLSimulationSettings.maxNumRays[/url]
+		</member>
+		<member name="max_reflection_sources" type="float" setter="set_max_num_refl_srcs" getter="get_max_num_refl_srcs" default="8.0">
+			See [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings13maxNumSourcesE]IPLSimulationSettings.maxNumSources[/url]
+		</member>
+		<member name="reflection_threads" type="float" setter="set_num_refl_threads" getter="get_num_refl_threads" default="2.0">
+            Number of threads that reflection simulation will use (see [url=https://valvesoftware.github.io/steam-audio/doc/capi/simulation.html#_CPPv4N21IPLSimulationSettings10numThreadsE]IPLSimulationSettings.numThreads[/url])
+		</member>
+		<member name="scene_type" type="int" setter="set_scene_type" getter="get_scene_type" enum="IPLSceneType" default="1">
+            The ray tracing implementation to use - see [url=https://valvesoftware.github.io/steam-audio/doc/capi/scene.html#_CPPv412IPLSceneType]IPLSceneType[/url]
+		</member>
+	</members>
+</class>
