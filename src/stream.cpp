@@ -92,6 +92,12 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 				ls->fx.direct, &ls->direct_outputs,
 				&ls->bufs.in, &ls->bufs.direct);
 	} else {
+		for (int i = 0; i < ls->bufs.direct.numChannels; i++) {
+			for (int j = 0; j < ls->bufs.direct.numSamples; j++) {
+				ls->bufs.direct.data[i][j] = 0.0f;
+			}
+		}
+
 		iplAudioBufferMix(gs->ctx, &ls->bufs.in, &ls->bufs.direct);
 	}
 
