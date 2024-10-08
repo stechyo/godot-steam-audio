@@ -88,6 +88,7 @@ IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 IPLContext create_ctx() {
 	IPLContextSettings ctx_cfg{};
 	ctx_cfg.version = STEAMAUDIO_VERSION;
+	ctx_cfg.logCallback = log_callback;
 	IPLContext ctx;
 	IPLerror err = iplContextCreate(&ctx_cfg, &ctx);
 	handleErr(err);

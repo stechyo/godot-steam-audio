@@ -119,4 +119,23 @@ inline void handleErr(IPLerror err) {
 	}
 }
 
+inline void log_callback(IPLLogLevel level, const char *message) {
+	SteamAudio::GodotSteamAudioLogLevel godot_log_level;
+	switch (level) {
+		case IPL_LOGLEVEL_INFO:
+			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_info;
+			break;
+		case IPL_LOGLEVEL_WARNING:
+			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_warn;
+			break;
+		case IPL_LOGLEVEL_ERROR:
+			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_error;
+			break;
+		case IPL_LOGLEVEL_DEBUG:
+			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_debug;
+			break;
+	}
+	SteamAudio::log(godot_log_level, String(message).strip_edges().utf8().get_data());
+}
+
 #endif
