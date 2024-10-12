@@ -17,8 +17,7 @@ jobs:
       - name: install-deps
         run: |
           # install scons
-          python -c "import sys; print(sys.version)"
-          python -m pip install scons==4.4.0
+          python -m pip install --break-system-packages scons==4.4.0
           scons --version
           # install windows deps
           sudo apt-get install mingw-w64
