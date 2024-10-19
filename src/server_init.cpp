@@ -2,6 +2,8 @@
 #include "config.hpp"
 #include "phonon.h"
 #include "steam_audio.hpp"
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/os.hpp>
 
 using namespace godot;
 
@@ -73,6 +75,14 @@ IPLSimulator create_simulator(IPLContext ctx, IPLAudioSettings audio_cfg, IPLSce
 
 IPLSceneSettings create_scene_cfg(IPLContext ctx) {
 	IPLSceneSettings scene_cfg = {};
+
+	if (SteamAudioConfig::scene_type == IPL_SCENETYPE_EMBREE &&
+			OS::get_singleton()->get_name() == "macOS" &&
+			Engine::get_singleton()->get_architecture_name() == "arm64") {
+		SteamAudioConfig::scene_type = IPL_SCENETYPE_DEFAULT;
+		SteamAudio::log(SteamAudio::log_info, "Embree is not supported on Apple Silicon, reverting to default scene type.");
+	}
+
 	scene_cfg.type = SteamAudioConfig::scene_type;
 	if (scene_cfg.type == IPL_SCENETYPE_EMBREE) {
 		IPLEmbreeDeviceSettings embree_cfg{};
