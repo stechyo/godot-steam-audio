@@ -112,8 +112,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b3x3w"]
 _data = {
-"RESET": SubResource("Animation_elb2f"),
-"fade": SubResource("Animation_8pkb1")
+&"RESET": SubResource("Animation_elb2f"),
+&"fade": SubResource("Animation_8pkb1")
 }
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v6p4c"]
@@ -251,7 +251,7 @@ mesh = SubResource("SphereMesh_s7swq")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Wooden House with RandomStream/Pluck Randomizer"]
 libraries = {
-"": SubResource("AnimationLibrary_b3x3w")
+&"": SubResource("AnimationLibrary_b3x3w")
 }
 
 [node name="Door House" parent="." instance=ExtResource("3_tysju")]
@@ -281,7 +281,7 @@ mesh = SubResource("SphereMesh_s7swq")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Door House/Pluck Randomizer"]
 libraries = {
-"": SubResource("AnimationLibrary_b3x3w")
+&"": SubResource("AnimationLibrary_b3x3w")
 }
 
 [node name="Door" type="MeshInstance3D" parent="Door House"]
