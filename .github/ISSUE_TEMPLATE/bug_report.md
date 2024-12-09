@@ -13,9 +13,6 @@ assignees: ''
 **Godot-steam-audio version**
 e.g. 0.1.0
 
-**Steam-Audio version**
-e.g. 4.5.0
-
 **Operating System**
 e.g. Windows 11, Ubuntu 22.04
 
