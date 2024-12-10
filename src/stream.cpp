@@ -32,7 +32,7 @@ Ref<AudioStream> SteamAudioStream::get_stream() { return this->stream; }
 SteamAudioStreamPlayback::SteamAudioStreamPlayback() {}
 SteamAudioStreamPlayback::~SteamAudioStreamPlayback() {}
 
-int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, int32_t frames) {
+int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int32_t frames) {
 	if (parent == nullptr) {
 		return frames;
 	}
