@@ -75,10 +75,27 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 		ls->bufs.in.data[1][i] = mixed_frames[i].y;
 	}
 
+	IPLAirAbsorptionModel airAbsorptionModel{};
+	airAbsorptionModel.type = IPL_AIRABSORPTIONTYPE_DEFAULT;
+
+	IPLVector3 sourcePosition = ipl_vec3_from(ls->src.player->get_global_transform().origin);
+	IPLVector3 listenerPosition = gs->listener_coords.origin;
+	float airAbsorption[3];
+	airAbsorption[0] = ls->cfg.air_absorption_low;
+    airAbsorption[1] = ls->cfg.air_absorption_mid;
+    airAbsorption[2] = ls->cfg.air_absorption_high;
+
+	iplAirAbsorptionCalculate(gs->ctx, sourcePosition, listenerPosition, &airAbsorptionModel, airAbsorption);
+
 	if (ls->cfg.is_dist_attn_on) {
 		ls->direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
 				ls->direct_outputs.flags |
 				IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION);
+	}
+	if (ls->cfg.is_air_absorp_on) {
+		ls->direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
+				ls->direct_outputs.flags |
+				IPL_DIRECTEFFECTFLAGS_APPLYAIRABSORPTION);
 	}
 	if (ls->cfg.is_occlusion_on) {
 		ls->direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
@@ -86,6 +103,10 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 				IPL_DIRECTEFFECTFLAGS_APPLYOCCLUSION |
 				IPL_DIRECTEFFECTFLAGS_APPLYTRANSMISSION);
 	}
+
+	ls->direct_outputs.airAbsorption[0] = airAbsorption[0];
+	ls->direct_outputs.airAbsorption[1] = airAbsorption[1];
+	ls->direct_outputs.airAbsorption[2] = airAbsorption[2];
 
 	if (ls->direct_outputs.flags != 0) {
 		iplDirectEffectApply(

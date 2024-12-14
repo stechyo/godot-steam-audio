@@ -48,6 +48,10 @@ struct SteamAudioSourceConfig {
 	int ambisonics_order;
 	float max_refl_dist;
 	bool is_dist_attn_on;
+	bool is_air_absorp_on;
+	float air_absorption_low;
+	float air_absorption_mid;
+	float air_absorption_high;
 	bool is_ambisonics_on;
 	bool is_occlusion_on;
 	bool is_reflection_on;
