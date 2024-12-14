@@ -28,6 +28,10 @@ private:
 		1,
 		10000.0f,
 		false,
+		false,
+		0.9,
+		0.7,
+		0.5,
 		true,
 		true,
 		false
@@ -66,6 +70,14 @@ public:
 
 	bool is_dist_attn_on();
 	void set_dist_attn_on(bool p_dist_attn_on);
+	bool is_air_absorp_on();
+	void set_air_absorp_on(bool p_air_absorp_on);
+	float get_air_absorption_low();
+	void set_air_absorption_low(float p_air_absorption_low);
+	float get_air_absorption_mid();
+	void set_air_absorption_mid(float p_air_absorption_mid);
+	float get_air_absorption_high();
+	void set_air_absorption_high(float p_air_absorption_high);
 	bool is_reflection_on();
 	void set_reflection_on(bool p_reflection_on);
 	bool is_occlusion_on();
