@@ -19,6 +19,14 @@ void SteamAudioPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_min_attenuation_distance", "p_min_attenuation_distance"), &SteamAudioPlayer::set_min_attenuation_dist);
 	ClassDB::bind_method(D_METHOD("set_max_reflection_distance", "p_max_reflection_distance"), &SteamAudioPlayer::set_max_reflection_dist);
 	ClassDB::bind_method(D_METHOD("get_max_reflection_distance"), &SteamAudioPlayer::get_max_reflection_dist);
+	ClassDB::bind_method(D_METHOD("is_air_absorp_on"), &SteamAudioPlayer::is_air_absorp_on);
+	ClassDB::bind_method(D_METHOD("set_air_absorp_on", "p_air_absorp_on"), &SteamAudioPlayer::set_air_absorp_on);
+	ClassDB::bind_method(D_METHOD("set_air_absorption_low", "p_air_absorption_low"), &SteamAudioPlayer::set_air_absorption_low);
+	ClassDB::bind_method(D_METHOD("get_air_absorption_low"), &SteamAudioPlayer::get_air_absorption_low);
+	ClassDB::bind_method(D_METHOD("set_air_absorption_mid", "p_air_absorption_mid"), &SteamAudioPlayer::set_air_absorption_mid);
+	ClassDB::bind_method(D_METHOD("get_air_absorption_mid"), &SteamAudioPlayer::get_air_absorption_mid);
+	ClassDB::bind_method(D_METHOD("set_air_absorption_high", "p_air_absorption_high"), &SteamAudioPlayer::set_air_absorption_high);
+	ClassDB::bind_method(D_METHOD("get_air_absorption_high"), &SteamAudioPlayer::get_air_absorption_high);
 	ClassDB::bind_method(D_METHOD("is_occlusion_on"), &SteamAudioPlayer::is_occlusion_on);
 	ClassDB::bind_method(D_METHOD("set_occlusion_on", "p_occlusion_on"), &SteamAudioPlayer::set_occlusion_on);
 	ClassDB::bind_method(D_METHOD("is_reflection_on"), &SteamAudioPlayer::is_reflection_on);
@@ -35,6 +43,12 @@ void SteamAudioPlayer::_bind_methods() {
 	ADD_GROUP("Distance Attenuation", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "distance_attenuation"), "set_dist_attn_on", "is_dist_attn_on");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "min_attenuation_distance", PROPERTY_HINT_RANGE, "0.0,100.0,0.1"), "set_min_attenuation_distance", "get_min_attenuation_distance");
+
+	ADD_GROUP("Air Absorption", "");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "air_absorption"), "set_air_absorp_on", "is_air_absorp_on");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_low", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_low", "get_air_absorption_low");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_mid", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_mid", "get_air_absorption_mid");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_high", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_high", "get_air_absorption_high");
 
 	ADD_GROUP("Occlusion and Transmission", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "occlusion"), "set_occlusion_on", "is_occlusion_on");
@@ -291,6 +305,16 @@ void SteamAudioPlayer::set_max_reflection_dist(float p_max_reflection_dist) { cf
 
 bool SteamAudioPlayer::is_dist_attn_on() { return cfg.is_dist_attn_on; }
 void SteamAudioPlayer::set_dist_attn_on(bool p_dist_attn_on) { cfg.is_dist_attn_on = p_dist_attn_on; }
+
+bool SteamAudioPlayer::is_air_absorp_on() { return cfg.is_air_absorp_on; }
+void SteamAudioPlayer::set_air_absorp_on(bool p_air_absorp_on) { cfg.is_air_absorp_on = p_air_absorp_on; }
+float SteamAudioPlayer::get_air_absorption_low() { return cfg.air_absorption_low; }
+void SteamAudioPlayer::set_air_absorption_low(float p_air_absorption_low) { cfg.air_absorption_low = p_air_absorption_low; }
+float SteamAudioPlayer::get_air_absorption_mid() { return cfg.air_absorption_mid; }
+void SteamAudioPlayer::set_air_absorption_mid(float p_air_absorption_mid) { cfg.air_absorption_mid = p_air_absorption_mid; }
+float SteamAudioPlayer::get_air_absorption_high() { return cfg.air_absorption_high; }
+void SteamAudioPlayer::set_air_absorption_high(float p_air_absorption_high) { cfg.air_absorption_high = p_air_absorption_high; }
+
 bool SteamAudioPlayer::is_reflection_on() { return cfg.is_reflection_on; }
 void SteamAudioPlayer::set_reflection_on(bool p_reflection_on) { cfg.is_reflection_on = p_reflection_on; }
 bool SteamAudioPlayer::is_occlusion_on() { return cfg.is_occlusion_on; }
