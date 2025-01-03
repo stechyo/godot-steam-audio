@@ -5,6 +5,7 @@
 #include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/callable_method_pointer.hpp"
 #include "phonon.h"
+#include "player.hpp"
 #include "server_init.hpp"
 #include "steam_audio.hpp"
 #include <algorithm>
@@ -128,6 +129,11 @@ void SteamAudioServer::tick() {
 			continue;
 		}
 		if (ls->src.player->get_global_position().distance_to(listener->get_global_position()) > ls->cfg.max_refl_dist) {
+			continue;
+		}
+
+		auto player = dynamic_cast<SteamAudioPlayer *>(ls->src.player);
+		if (player == nullptr || !player->is_reflection_on()) {
 			continue;
 		}
 
