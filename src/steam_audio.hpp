@@ -10,6 +10,8 @@
 
 using namespace godot;
 
+VARIANT_ENUM_CAST(IPLAirAbsorptionModelType);
+
 class SteamAudio {
 public:
 	typedef enum {
@@ -52,6 +54,7 @@ struct SteamAudioSourceConfig {
 	float air_absorption_low;
 	float air_absorption_mid;
 	float air_absorption_high;
+	IPLAirAbsorptionModelType air_absorption_model_type;
 	bool is_ambisonics_on;
 	bool is_occlusion_on;
 	bool is_reflection_on;

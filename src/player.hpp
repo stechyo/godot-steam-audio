@@ -1,4 +1,3 @@
-
 #ifndef STEAM_AUDIO_PLAYER_H
 #define STEAM_AUDIO_PLAYER_H
 
@@ -32,6 +31,7 @@ private:
 		0.9,
 		0.7,
 		0.5,
+		IPLAirAbsorptionModelType::IPL_AIRABSORPTIONTYPE_DEFAULT,
 		true,
 		true,
 		false
@@ -70,6 +70,7 @@ public:
 
 	bool is_dist_attn_on();
 	void set_dist_attn_on(bool p_dist_attn_on);
+
 	bool is_air_absorp_on();
 	void set_air_absorp_on(bool p_air_absorp_on);
 	float get_air_absorption_low();
@@ -78,8 +79,12 @@ public:
 	void set_air_absorption_mid(float p_air_absorption_mid);
 	float get_air_absorption_high();
 	void set_air_absorption_high(float p_air_absorption_high);
+	IPLAirAbsorptionModelType get_air_absorption_model_type();
+	void set_air_absorption_model_type(IPLAirAbsorptionModelType p_air_absorption_model_type);
+
 	bool is_reflection_on();
 	void set_reflection_on(bool p_reflection_on);
+
 	bool is_occlusion_on();
 	void set_occlusion_on(bool p_occlusion_on);
 
