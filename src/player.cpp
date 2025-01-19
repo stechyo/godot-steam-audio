@@ -27,6 +27,8 @@ void SteamAudioPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_air_absorption_mid"), &SteamAudioPlayer::get_air_absorption_mid);
 	ClassDB::bind_method(D_METHOD("set_air_absorption_high", "p_air_absorption_high"), &SteamAudioPlayer::set_air_absorption_high);
 	ClassDB::bind_method(D_METHOD("get_air_absorption_high"), &SteamAudioPlayer::get_air_absorption_high);
+	ClassDB::bind_method(D_METHOD("get_air_absorption_model_type"), &SteamAudioPlayer::get_air_absorption_model_type);
+	ClassDB::bind_method(D_METHOD("set_air_absorption_model_type", "p_air_absorption_model_type"), &SteamAudioPlayer::set_air_absorption_model_type);
 	ClassDB::bind_method(D_METHOD("is_occlusion_on"), &SteamAudioPlayer::is_occlusion_on);
 	ClassDB::bind_method(D_METHOD("set_occlusion_on", "p_occlusion_on"), &SteamAudioPlayer::set_occlusion_on);
 	ClassDB::bind_method(D_METHOD("is_reflection_on"), &SteamAudioPlayer::is_reflection_on);
@@ -49,6 +51,7 @@ void SteamAudioPlayer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_low", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_low", "get_air_absorption_low");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_mid", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_mid", "get_air_absorption_mid");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "air_absorption_high", PROPERTY_HINT_RANGE, "0.0,1.0,0.1"), "set_air_absorption_high", "get_air_absorption_high");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "air_absorption_model", PROPERTY_HINT_ENUM, "Default,Exponential"), "set_air_absorption_model_type", "get_air_absorption_model_type");
 
 	ADD_GROUP("Occlusion and Transmission", "");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "occlusion"), "set_occlusion_on", "is_occlusion_on");
@@ -314,6 +317,8 @@ float SteamAudioPlayer::get_air_absorption_mid() { return cfg.air_absorption_mid
 void SteamAudioPlayer::set_air_absorption_mid(float p_air_absorption_mid) { cfg.air_absorption_mid = p_air_absorption_mid; }
 float SteamAudioPlayer::get_air_absorption_high() { return cfg.air_absorption_high; }
 void SteamAudioPlayer::set_air_absorption_high(float p_air_absorption_high) { cfg.air_absorption_high = p_air_absorption_high; }
+IPLAirAbsorptionModelType SteamAudioPlayer::get_air_absorption_model_type() { return cfg.air_absorption_model_type; }
+void SteamAudioPlayer::set_air_absorption_model_type(IPLAirAbsorptionModelType p_air_absorption_model_type) { cfg.air_absorption_model_type = p_air_absorption_model_type; }
 
 bool SteamAudioPlayer::is_reflection_on() { return cfg.is_reflection_on; }
 void SteamAudioPlayer::set_reflection_on(bool p_reflection_on) { cfg.is_reflection_on = p_reflection_on; }
