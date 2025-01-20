@@ -8,6 +8,10 @@
 
 using namespace godot;
 
+void SteamAudioBakedReflections::_ready() {
+    SteamAudioServer::get_singleton()->set_baked_reflections(this);
+}
+
 void SteamAudioBakedReflections::_bind_methods() {
     // Bind methods
     ClassDB::bind_method(D_METHOD("set_baked_data", "data"), &SteamAudioBakedReflections::set_baked_data);
@@ -181,7 +185,9 @@ void SteamAudioBakedReflections::start_bake() {
     if (!baked_data.is_valid()) {
         baked_data.instantiate();
     }
-    baked_data->set_serialized_data_internal(iplSerializedObjectGetData(serialized_object));
+    baked_data->set_data(serialized_object);
+
+    iplSerializedObjectRelease(&serialized_object);
 
     is_baking = false;
 }

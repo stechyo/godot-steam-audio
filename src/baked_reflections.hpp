@@ -36,13 +36,14 @@ private:
     float probe_height;
     Vector3 probe_generation_extents;
 
-    // bake data
-    Ref<SteamAudioBakedReflectionData> baked_data;
-
 protected:
     static void _bind_methods();
 
 public:
+    void _ready() override;
+    
+    Ref<SteamAudioBakedReflectionData> baked_data;
+
     SteamAudioBakedReflections();
     ~SteamAudioBakedReflections();
 

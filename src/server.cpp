@@ -291,6 +291,17 @@ void SteamAudioServer::remove_dynamic_mesh(IPLInstancedMesh mesh) {
 	iplInstancedMeshRemove(mesh, global_state.scene);
 }
 
+void SteamAudioServer::set_baked_reflections(SteamAudioBakedReflections *baked_reflections) {
+	this->baked_reflections = baked_reflections;
+	if (baked_reflections && baked_reflections->baked_data.is_valid()) {
+		IPLProbeBatch probeBatch{};
+		IPLSerializedObject serializedObject = baked_reflections->baked_data->get_data();
+		iplProbeBatchLoad(global_state.ctx, serializedObject, &probeBatch);
+		iplSimulatorAddProbeBatch(global_state.sim, probeBatch);
+		iplSimulatorCommit(global_state.sim);
+	}
+}
+
 SteamAudioServer::SteamAudioServer() {
 	self = this;
 	is_global_state_init.store(false);
