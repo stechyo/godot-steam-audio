@@ -1,5 +1,8 @@
 #include "baked_reflection_data.hpp"
+
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/classes/resource_saver.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
@@ -21,6 +24,11 @@ void SteamAudioBakedReflectionData::set_serialized_data_internal(IPLbyte *data) 
     serialized_data.resize(sizeof(data));
     for (size_t i = 0; i < sizeof(data); ++i) {
         serialized_data[i] = data[i];
+    }
+
+    Error result = ResourceSaver::get_singleton()->save(this, get_path(), ResourceSaver::FLAG_COMPRESS);
+    if (result != OK) {
+        UtilityFunctions::push_error("Failed to save the baked reflection data resource. Error code: " + String::num_int64(result));
     }
 }
 
