@@ -19,6 +19,7 @@ public:
     SteamAudioBakedReflectionData();
     ~SteamAudioBakedReflectionData();
 
+    void set_serialized_data_internal(IPLbyte *data);
     void set_serialized_data(const PackedByteArray& p_data);
     PackedByteArray get_serialized_data() const;
 };

@@ -1,4 +1,4 @@
-#include "reflection_baked_data.hpp"
+#include "baked_reflection_data.hpp"
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -15,6 +15,13 @@ SteamAudioBakedReflectionData::SteamAudioBakedReflectionData() {
 }
 
 SteamAudioBakedReflectionData::~SteamAudioBakedReflectionData() {
+}
+
+void SteamAudioBakedReflectionData::set_serialized_data_internal(IPLbyte *data) {
+    serialized_data.resize(sizeof(data));
+    for (size_t i = 0; i < sizeof(data); ++i) {
+        serialized_data[i] = data[i];
+    }
 }
 
 void SteamAudioBakedReflectionData::set_serialized_data(const PackedByteArray& p_data) {

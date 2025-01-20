@@ -2,7 +2,7 @@
 #define GODOT_STEAM_AUDIO_REFLECTION_BAKER_HPP
 
 #include "probe.hpp"
-#include "reflection_baked_data.hpp"
+#include "baked_reflection_data.hpp"
 
 #include <godot_cpp/classes/node.hpp>
 
@@ -10,8 +10,8 @@
 
 using namespace godot;
 
-class SteamAudioReflectionBaker : public Node {
-    GDCLASS(SteamAudioReflectionBaker, Node)
+class SteamAudioBakedReflections : public Node {
+    GDCLASS(SteamAudioBakedReflections, Node)
 
 private:
     IPLProbeBatch probe_batch;
@@ -43,8 +43,8 @@ protected:
     static void _bind_methods();
 
 public:
-    SteamAudioReflectionBaker();
-    ~SteamAudioReflectionBaker();
+    SteamAudioBakedReflections();
+    ~SteamAudioBakedReflections();
 
     void generate_probes();
 
