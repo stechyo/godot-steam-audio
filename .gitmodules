@@ -1,6 +1,6 @@
 [submodule "src/lib/godot-cpp"]
 	path = src/lib/godot-cpp
-	url = https://github.com/stechyo/godot-cpp
+	url = https://github.com/godotengine/godot-cpp
 	branch = master
 [submodule "src/lib/steamaudio"]
 	path = src/lib/steamaudio
