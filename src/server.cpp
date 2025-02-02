@@ -49,6 +49,12 @@ void SteamAudioServer::tick() {
 		attn_model.type = IPL_DISTANCEATTENUATIONTYPE_INVERSEDISTANCE;
 		attn_model.minDistance = ls->cfg.min_attn_dist;
 
+		IPLAirAbsorptionModel absorp_model{};
+		absorp_model.type = ls->cfg.air_absorption_model_type;
+		absorp_model.coefficients[0] = ls->cfg.air_absorption_low;
+		absorp_model.coefficients[1] = ls->cfg.air_absorption_mid;
+		absorp_model.coefficients[2] = ls->cfg.air_absorption_high;
+
 		IPLCoordinateSpace3 src_coords;
 		src_coords.ahead = IPLVector3{};
 		src_coords.up = IPLVector3{};
@@ -60,8 +66,10 @@ void SteamAudioServer::tick() {
 		inputs.directFlags = static_cast<IPLDirectSimulationFlags>(
 				IPL_DIRECTSIMULATIONFLAGS_DISTANCEATTENUATION |
 				IPL_DIRECTSIMULATIONFLAGS_OCCLUSION |
-				IPL_DIRECTSIMULATIONFLAGS_TRANSMISSION);
+				IPL_DIRECTSIMULATIONFLAGS_TRANSMISSION |
+				IPL_DIRECTSIMULATIONFLAGS_AIRABSORPTION);
 		inputs.distanceAttenuationModel = attn_model;
+		inputs.airAbsorptionModel = absorp_model;
 		inputs.source = src_coords;
 		inputs.occlusionType = IPL_OCCLUSIONTYPE_VOLUMETRIC;
 		inputs.occlusionRadius = ls->cfg.occ_radius;

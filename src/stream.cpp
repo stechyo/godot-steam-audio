@@ -76,22 +76,6 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, double rate_scale, in
 	}
 
 	if (ls->cfg.is_air_absorp_on) {
-		IPLAirAbsorptionModel airAbsorptionModel{};
-		airAbsorptionModel.type = ls->cfg.air_absorption_model_type;
-
-		IPLVector3 sourcePosition = ipl_vec3_from(ls->src.player->get_global_transform().origin);
-		IPLVector3 listenerPosition = gs->listener_coords.origin;
-		float airAbsorption[3];
-		airAbsorption[0] = ls->cfg.air_absorption_low;
-		airAbsorption[1] = ls->cfg.air_absorption_mid;
-		airAbsorption[2] = ls->cfg.air_absorption_high;
-
-		iplAirAbsorptionCalculate(gs->ctx, sourcePosition, listenerPosition, &airAbsorptionModel, airAbsorption);
-
-		ls->direct_outputs.airAbsorption[0] = airAbsorption[0];
-		ls->direct_outputs.airAbsorption[1] = airAbsorption[1];
-		ls->direct_outputs.airAbsorption[2] = airAbsorption[2];
-
 		ls->direct_outputs.flags = static_cast<IPLDirectEffectFlags>(
 				ls->direct_outputs.flags |
 				IPL_DIRECTEFFECTFLAGS_APPLYAIRABSORPTION);
