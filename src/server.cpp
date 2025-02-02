@@ -63,11 +63,6 @@ void SteamAudioServer::tick() {
 
 		IPLSimulationInputs inputs{};
 		inputs.flags = IPL_SIMULATIONFLAGS_DIRECT;
-		inputs.directFlags = static_cast<IPLDirectSimulationFlags>(
-				IPL_DIRECTSIMULATIONFLAGS_DISTANCEATTENUATION |
-				IPL_DIRECTSIMULATIONFLAGS_OCCLUSION |
-				IPL_DIRECTSIMULATIONFLAGS_TRANSMISSION |
-				IPL_DIRECTSIMULATIONFLAGS_AIRABSORPTION);
 		inputs.distanceAttenuationModel = attn_model;
 		inputs.airAbsorptionModel = absorp_model;
 		inputs.source = src_coords;
@@ -75,6 +70,24 @@ void SteamAudioServer::tick() {
 		inputs.occlusionRadius = ls->cfg.occ_radius;
 		inputs.numOcclusionSamples = ls->cfg.occ_samples;
 		inputs.numTransmissionRays = ls->cfg.transm_rays;
+
+		if (ls->cfg.is_air_absorp_on) {
+			inputs.directFlags = static_cast<IPLDirectSimulationFlags>(
+					inputs.directFlags |
+					IPL_DIRECTSIMULATIONFLAGS_AIRABSORPTION);
+		}
+
+		if (ls->cfg.is_dist_attn_on) {
+			inputs.directFlags = static_cast<IPLDirectSimulationFlags>(
+					inputs.directFlags |
+					IPL_DIRECTSIMULATIONFLAGS_DISTANCEATTENUATION);
+		}
+		if (ls->cfg.is_occlusion_on) {
+			inputs.directFlags = static_cast<IPLDirectSimulationFlags>(
+					inputs.directFlags |
+					IPL_DIRECTSIMULATIONFLAGS_OCCLUSION |
+					IPL_DIRECTSIMULATIONFLAGS_TRANSMISSION);
+		}
 
 		SteamAudio::log(SteamAudio::log_debug, "tick: setting inputs");
 		iplSourceSetInputs(ls->src.src, IPL_SIMULATIONFLAGS_DIRECT, &inputs);
