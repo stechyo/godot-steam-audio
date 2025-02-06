@@ -1,10 +1,8 @@
 #ifndef STEAM_AUDIO_STREAM_H
 #define STEAM_AUDIO_STREAM_H
 
-#include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "player.hpp"
-#include "steam_audio.hpp"
 #include <phonon.h>
 #include <godot_cpp/classes/audio_frame.hpp>
 #include <godot_cpp/classes/audio_stream.hpp>
@@ -54,8 +52,7 @@ public:
 	void set_stream(Ref<AudioStream> p_stream);
 	Ref<AudioStreamPlayback> get_stream_playback();
 
-	virtual int32_t _mix(AudioFrame *buffer, double rate_scale,
-			int32_t frames) override;
+	virtual int32_t _mix(AudioFrame *buffer, float rate_scale, int32_t frames) override;
 	int play_stream(const Ref<AudioStream> &p_stream, float p_from_offset,
 			float p_volume_db, float p_pitch_scale);
 	void _start(double from_pos) override;
