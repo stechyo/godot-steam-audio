@@ -3,6 +3,7 @@
 
 #include "godot_cpp/classes/object.hpp"
 #include "godot_cpp/classes/thread.hpp"
+#include "baked_reflections.hpp"
 #include "listener.hpp"
 #include "steam_audio.hpp"
 #include <atomic>
@@ -34,6 +35,8 @@ private:
 	// TODO: allow for multiple
 	SteamAudioListener *listener = nullptr;
 
+	SteamAudioBakedReflections *baked_reflections = nullptr;
+
 	void init_scene(IPLSceneSettings *scene_cfg);
 	void start_refl_sim();
 	void run_refl_sim();
@@ -56,6 +59,7 @@ public:
 	void remove_static_mesh(IPLStaticMesh mesh);
 	void add_dynamic_mesh(IPLInstancedMesh mesh);
 	void remove_dynamic_mesh(IPLInstancedMesh mesh);
+	void set_baked_reflections(SteamAudioBakedReflections *baked_reflections);
 
 	void tick();
 };
