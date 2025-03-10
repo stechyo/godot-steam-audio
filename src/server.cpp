@@ -37,6 +37,7 @@ void SteamAudioServer::tick() {
 		if (ls->src.player == nullptr) {
 			UtilityFunctions::push_warning(
 					"local state has empty player, not updating simulation state");
+			continue;
 		}
 		if (!ls->src.player->is_playing()) {
 			continue;
@@ -106,6 +107,7 @@ void SteamAudioServer::tick() {
 		if (ls->src.player == nullptr) {
 			UtilityFunctions::push_warning(
 					"local state has empty player, not updating simulation state");
+			continue;
 		}
 		if (!ls->src.player->is_playing()) {
 			continue;
@@ -126,6 +128,7 @@ void SteamAudioServer::tick() {
 		if (ls->src.player == nullptr) {
 			UtilityFunctions::push_warning(
 					"local state has empty player, not updating simulation state");
+			continue;
 		}
 		if (!ls->src.player->is_playing()) {
 			continue;
@@ -145,6 +148,7 @@ void SteamAudioServer::tick() {
 		if (ls->src.player == nullptr) {
 			UtilityFunctions::push_warning(
 					"local state has empty player, not updating simulation state");
+			continue;
 		}
 		if (!ls->src.player->is_playing()) {
 			continue;
