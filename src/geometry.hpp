@@ -26,6 +26,8 @@ protected:
 	static void _bind_methods();
 
 public:
+	bool created = false;
+	bool registered = false;
 	bool disabled = false;
 
 	SteamAudioGeometry();
