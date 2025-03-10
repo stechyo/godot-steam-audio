@@ -25,7 +25,9 @@ SteamAudioGeometry::~SteamAudioGeometry() {
 		return;
 	}
 
-	unregister_geometry();
+	if (!disabled) {
+		unregister_geometry();
+	}
 	destroy_geometry();
 }
 
@@ -35,7 +37,9 @@ void SteamAudioGeometry::ready_internal() {
 	}
 
 	create_geometry();
-	register_geometry();
+	if (!disabled) {
+		register_geometry();
+	}
 }
 
 void SteamAudioGeometry::_notification(int p_what) {
