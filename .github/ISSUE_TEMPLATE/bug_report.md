@@ -7,9 +7,6 @@ assignees: ''
 
 ---
 
-**Are you using the provided fork of Godot?**
-(yes/no)
-
 **Godot-steam-audio version**
 e.g. 0.1.0
 
