@@ -13,6 +13,12 @@ jobs:
         id: vars
         run: |
           echo "COMMIT_SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+      - uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r23c
+          add-to-path: true
+          link-to-sdk: true
       - uses: actions/setup-python@v5
       - name: install-deps
         run: |
@@ -28,6 +34,8 @@ jobs:
           unzip steamaudio_4.5.3.zip 'steamaudio/lib/**/*' -d src/lib
           cp src/lib/steamaudio/lib/linux-x64/* project/addons/godot-steam-audio/bin/
           cp src/lib/steamaudio/lib/windows-x64/* project/addons/godot-steam-audio/bin/
+          cp src/lib/steamaudio/lib/android-armv8/* project/addons/godot-steam-audio/bin/android/arm64
+          cp src/lib/steamaudio/lib/android-x64/* project/addons/godot-steam-audio/bin/android/x86_64
       - name: build-ext
         run: |
           make release 
