@@ -7,6 +7,10 @@ compatibility_minimum = 4.3
 
 linux.x86_64.debug ="res://addons/godot-steam-audio/bin/libgodot-steam-audio.linux.template_debug.x86_64.so"
 linux.x86_64.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.linux.template_release.x86_64.so"
+android.x86_64.debug ="res://addons/godot-steam-audio/bin/libgodot-steam-audio.android.template_debug.x86_64.so"
+android.x86_64.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.android.template_release.x86_64.so"
+android.arm64.debug ="res://addons/godot-steam-audio/bin/libgodot-steam-audio.android.template_debug.arm64.so"
+android.arm64.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.android.template_release.arm64.so"
 windows.x86_64.debug = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.windows.template_debug.x86_64.dll"
 windows.x86_64.release = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.windows.template_release.x86_64.dll"
 macos.debug = "res://addons/godot-steam-audio/bin/libgodot-steam-audio.macos.template_debug.universal.dylib"
@@ -39,4 +43,16 @@ linux.x86_64.debug = {
 }
 linux.x86_64.release = {
     "res://addons/godot-steam-audio/bin/libphonon.so": ""
+}
+android.x86_64.debug = {
+    "res://addons/godot-steam-audio/bin/android/x86_64/libphonon.so": ""
+}
+android.x86_64.release = {
+    "res://addons/godot-steam-audio/bin/android/x86_64/libphonon.so": ""
+}
+android.arm64.debug = {
+    "res://addons/godot-steam-audio/bin/android/arm64/libphonon.so": ""
+}
+android.arm64.release = {
+    "res://addons/godot-steam-audio/bin/android/arm64/libphonon.so": ""
 }

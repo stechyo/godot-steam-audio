@@ -7,7 +7,9 @@ install-steam-audio:
 	cp src/lib/steamaudio/lib/linux-x64/libphonon.so project/addons/godot-steam-audio/bin
 
 release:
-	scons platform=linux target=template_debug && scons platform=windows target=template_debug && \
+	scons platform=android arch=arm64 target=template_release && scons platform=android arch=x86_64 target=template_release && \
+		scons platform=android arch=arm64 target=template_debug && scons platform=android arch=x86_64 target=template_debug && \
+		scons platform=linux target=template_debug && scons platform=windows target=template_debug && \
 		scons platform=linux target=template_release && scons platform=windows target=template_release
 	mkdir godot-steam-audio-demo
 	mkdir godot-steam-audio
