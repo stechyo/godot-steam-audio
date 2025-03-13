@@ -18,7 +18,10 @@ void SteamAudioGeometry::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "material", PROPERTY_HINT_RESOURCE_TYPE, "SteamAudioMaterial"), "set_material", "get_material");
 }
 
-SteamAudioGeometry::SteamAudioGeometry() {}
+SteamAudioGeometry::SteamAudioGeometry() {
+	created.store(false);
+	registered.store(false);
+}
 
 SteamAudioGeometry::~SteamAudioGeometry() {
 	if (Engine::get_singleton()->is_editor_hint()) {
@@ -71,9 +74,11 @@ void SteamAudioGeometry::recalculate() {
 }
 
 void SteamAudioGeometry::create_geometry() {
-	if (created) {
+	if (created.load()) {
 		return;
 	}
+
+	created.store(true);
 
 	// FIXME: we probably don't even have a global state yet
 	if (Object::cast_to<MeshInstance3D>(get_parent())) {
@@ -88,42 +93,43 @@ void SteamAudioGeometry::create_geometry() {
 		UtilityFunctions::push_error("The parent of SteamAudioGeometry must be a MeshInstance3D or a CollisionShape3D.");
 		return;
 	}
-
-	created = true;
 }
 
 void SteamAudioGeometry::destroy_geometry() {
-	if (!created) {
+	if (!created.load()) {
 		return;
 	}
+
+	created.store(false);
 
 	for (auto mesh : meshes) {
 		iplStaticMeshRelease(&mesh);
 	}
 	meshes.clear();
-	created = false;
 }
 
 void SteamAudioGeometry::register_geometry() {
-	if (registered) {
+	if (registered.load()) {
 		return;
 	}
+
+	registered.store(true);
 
 	for (auto mesh : meshes) {
 		SteamAudioServer::get_singleton()->add_static_mesh(mesh);
 	}
-	registered = true;
 }
 
 void SteamAudioGeometry::unregister_geometry() {
-	if (!registered) {
+	if (!registered.load()) {
 		return;
 	}
+
+	registered.store(false);
 
 	for (auto ipl_mesh : meshes) {
 		SteamAudioServer::get_singleton()->remove_static_mesh(ipl_mesh);
 	}
-	registered = false;
 }
 
 PackedStringArray SteamAudioGeometry::_get_configuration_warnings() const {
