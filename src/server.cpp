@@ -255,7 +255,7 @@ void SteamAudioServer::run_refl_sim() {
 		if (local_states_have_changed.load()) {
 			local_states_have_changed.store(false);
 			is_refl_thread_processing.store(false);
-			return;
+			continue;
 		}
 		SteamAudio::log(SteamAudio::log_debug, "running reflection sim");
 		iplSimulatorRunReflections(global_state.sim);
