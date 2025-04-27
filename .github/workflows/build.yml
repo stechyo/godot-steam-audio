@@ -30,8 +30,8 @@ jobs:
           sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
           sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
           # download steamaudio 
-          curl -LO https://github.com/ValveSoftware/steam-audio/releases/download/v4.5.3/steamaudio_4.5.3.zip
-          unzip steamaudio_4.5.3.zip 'steamaudio/lib/**/*' -d src/lib
+          curl -LO https://github.com/ValveSoftware/steam-audio/releases/download/v4.6.0/steamaudio_4.6.0.zip
+          unzip steamaudio_4.6.0.zip 'steamaudio/lib/**/*' -d src/lib
           cp src/lib/steamaudio/lib/linux-x64/* project/addons/godot-steam-audio/bin/
           cp src/lib/steamaudio/lib/windows-x64/* project/addons/godot-steam-audio/bin/
           cp src/lib/steamaudio/lib/android-armv8/* project/addons/godot-steam-audio/bin/android/arm64
