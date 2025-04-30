@@ -9,6 +9,9 @@
 #include "player.hpp"
 #include "server.hpp"
 #include "stream.hpp"
+#include "probe.hpp"
+#include "baked_reflections.hpp"
+#include "baked_reflection_data.hpp"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -33,6 +36,9 @@ void init_ext(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<SteamAudioMaterial>();
 		ClassDB::register_class<SteamAudioConfig>();
 		ClassDB::register_class<SteamAudioPlayer>();
+		ClassDB::register_class<SteamAudioBakedReflections>();
+		ClassDB::register_class<SteamAudioBakedReflectionData>();
+		ClassDB::register_class<SteamAudioProbe>();
 	}
 
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
