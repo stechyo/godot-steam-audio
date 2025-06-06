@@ -1,4 +1,8 @@
-# godot-steam-audio
+# What is this?
+This is an implementation of Steam Audio in Godot, being frankenstiened into a tech demo for what Space Station 14 could sound like with Steam Audio implemented.
+
+The readme of the godot project from whence it has been forked is as follows:
+## godot-steam-audio
 This is a GDExtension that integrates the [steam-audio](https://valvesoftware.github.io/steam-audio/) library
 into Godot 4.4. This adds sound effects such as occlusion and reverb into the engine.
 
