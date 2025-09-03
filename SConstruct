@@ -17,6 +17,7 @@ steam_audio_lib_path = env.get("STEAM_AUDIO_LIB_PATH", "src/lib/steamaudio/lib")
 if env["platform"] == "linux":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/linux-x64'])
     env.Append(LIBS=["libphonon.so"])
+    env.Append(LINKFLAGS=["-Wl,--version-script={}".format(env.File("linux_symbols.map").abspath)])
 elif env["platform"] == "windows":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/windows-x64'])
     env.Append(LIBS=["phonon"])
