@@ -1,0 +1,6 @@
+{
+    global:
+        init_extension;
+    local:
+        *;
+};
