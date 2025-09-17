@@ -22,13 +22,13 @@
 			Fraction of sound energy scattered in a random direction when reflecting.
 		</member>
 		<member name="transmission_high" type="float" setter="set_transmission_high" getter="get_transmission_high" default="0.0">
-			Fraction of sound energy absorbed at high frequencies.
+			Fraction of sound energy transmitted at high frequencies.
 		</member>
 		<member name="transmission_low" type="float" setter="set_transmission_low" getter="get_transmission_low" default="0.0">
-			Fraction of sound energy absorbed at low frequencies.
+			Fraction of sound energy transmitted at low frequencies.
 		</member>
 		<member name="transmission_mid" type="float" setter="set_transmission_mid" getter="get_transmission_mid" default="0.0">
-			Fraction of sound energy absorbed at mid frequencies.
+			Fraction of sound energy transmitted at mid frequencies.
 		</member>
 	</members>
 </class>
