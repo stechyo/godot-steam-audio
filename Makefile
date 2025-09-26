@@ -4,7 +4,10 @@ install-steam-audio:
 		| cut -d : -f 2,3 | tr -d \" | wget -O src/lib/steamaudio.zip -i -
 	unzip src/lib/steamaudio.zip -d src/lib/
 	rm src/lib/steamaudio.zip
-	cp src/lib/steamaudio/lib/linux-x64/libphonon.so project/addons/godot-steam-audio/bin
+	cp src/lib/steamaudio/lib/linux-x64/* project/addons/godot-steam-audio/bin/
+	cp src/lib/steamaudio/lib/windows-x64/* project/addons/godot-steam-audio/bin/
+	cp src/lib/steamaudio/lib/android-armv8/* project/addons/godot-steam-audio/bin/android/arm64
+	cp src/lib/steamaudio/lib/android-x64/* project/addons/godot-steam-audio/bin/android/x86_64
 
 release:
 	scons platform=android arch=arm64 target=template_release && scons platform=android arch=x86_64 target=template_release && \
