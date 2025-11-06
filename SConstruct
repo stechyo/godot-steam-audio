@@ -37,6 +37,7 @@ elif env["platform"] == "windows":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/windows-x64'])
 elif env["platform"] == "macos":
     env.Append(LIBPATH=[f'{steam_audio_lib_path}/osx'])
+    env.Append(LINKFLAGS=['-Wl,-rpath,@loader_path'])
 elif env["platform"] == "android":
     if env["arch"] == "arm64":
         env.Append(LIBPATH=[f'{steam_audio_lib_path}/android-armv8'])
