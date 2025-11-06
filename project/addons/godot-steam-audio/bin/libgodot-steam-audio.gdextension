@@ -44,6 +44,12 @@ linux.x86_64.debug = {
 linux.x86_64.release = {
     "res://addons/godot-steam-audio/bin/libphonon.so": ""
 }
+macos.debug = {
+    "res://addons/godot-steam-audio/bin/libphonon.dylib": ""
+}
+macos.release = {
+    "res://addons/godot-steam-audio/bin/libphonon.dylib": ""
+}
 android.x86_64.debug = {
     "res://addons/godot-steam-audio/bin/android/x86_64/libphonon.so": ""
 }
