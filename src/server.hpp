@@ -37,7 +37,7 @@ private:
 	void init_scene(IPLSceneSettings *scene_cfg);
 	void start_refl_sim();
 	void run_refl_sim();
-	Thread *refl_thread = nullptr;
+	Ref<Thread> refl_thread;
 
 protected:
 	static void _bind_methods();
