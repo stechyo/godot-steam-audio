@@ -5,3 +5,4 @@
 [submodule "src/lib/steamaudio"]
 	path = src/lib/steamaudio
 	url = https://github.com/ValveSoftware/steam-audio
+	branch = 4.8.0
