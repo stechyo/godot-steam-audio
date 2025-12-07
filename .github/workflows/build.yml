@@ -47,3 +47,33 @@ jobs:
         with:
           name: godot-steam-audio-demo-${{ env.COMMIT_SHORT_SHA }}
           path: ${{ github.workspace }}/godot-steam-audio-demo/
+  build-macos-release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          echo "COMMIT_SHORT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+      - uses: actions/setup-python@v5
+      - name: install-deps
+        run: |
+          # install scons
+          PIP_BREAK_SYSTEM_PACKAGES=1 python -m pip install scons==4.4.0
+          scons --version
+          curl -LO https://github.com/ValveSoftware/steam-audio/releases/download/v4.8.0/steamaudio_4.8.0.zip
+          unzip steamaudio_4.8.0.zip 'steamaudio/lib/**/*' -d src/lib
+          cp -r src/lib/steamaudio/lib/osx/* project/addons/godot-steam-audio/bin/
+      - name: build-ext
+        run: |
+          make macos-release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: godot-steam-audio-macos-${{ env.COMMIT_SHORT_SHA }}
+          path: ${{ github.workspace }}/godot-steam-audio/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: godot-steam-audio-demo-macos-${{ env.COMMIT_SHORT_SHA }}
+          path: ${{ github.workspace }}/godot-steam-audio-demo/
