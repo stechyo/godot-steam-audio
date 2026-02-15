@@ -102,11 +102,11 @@ void SteamAudioConfig::set_max_ambisonics_order(int p_max_ambisonics_order) { ma
 IPLSceneType SteamAudioConfig::get_scene_type() { return scene_type; }
 void SteamAudioConfig::set_scene_type(IPLSceneType p_scene_type) { scene_type = p_scene_type; }
 
-float SteamAudioConfig::get_num_refl_threads() { return num_refl_threads; }
-void SteamAudioConfig::set_num_refl_threads(float p_num_refl_threads) { num_refl_threads = p_num_refl_threads; }
+int SteamAudioConfig::get_num_refl_threads() { return num_refl_threads; }
+void SteamAudioConfig::set_num_refl_threads(int p_num_refl_threads) { num_refl_threads = p_num_refl_threads; }
 
-float SteamAudioConfig::get_max_num_refl_srcs() { return max_num_refl_srcs; }
-void SteamAudioConfig::set_max_num_refl_srcs(float p_max_num_refl_srcs) { max_num_refl_srcs = p_max_num_refl_srcs; }
+int SteamAudioConfig::get_max_num_refl_srcs() { return max_num_refl_srcs; }
+void SteamAudioConfig::set_max_num_refl_srcs(int p_max_num_refl_srcs) { max_num_refl_srcs = p_max_num_refl_srcs; }
 
 float SteamAudioConfig::get_max_refl_duration() { return max_refl_duration; }
 void SteamAudioConfig::set_max_refl_duration(float p_max_refl_duration) { max_refl_duration = p_max_refl_duration; }

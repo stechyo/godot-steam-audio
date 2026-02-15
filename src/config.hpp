@@ -48,10 +48,10 @@ public:
 	void set_max_ambisonics_order(int p_max_ambisonics_order);
 	IPLSceneType get_scene_type();
 	void set_scene_type(IPLSceneType p_scene_type);
-	float get_num_refl_threads();
-	void set_num_refl_threads(float p_num_refl_threads);
-	float get_max_num_refl_srcs();
-	void set_max_num_refl_srcs(float p_max_num_refl_srcs);
+	int get_num_refl_threads();
+	void set_num_refl_threads(int p_num_refl_threads);
+	int get_max_num_refl_srcs();
+	void set_max_num_refl_srcs(int p_max_num_refl_srcs);
 	float get_max_refl_duration();
 	void set_max_refl_duration(float p_max_refl_duration);
 	int get_num_diffuse_samples();
