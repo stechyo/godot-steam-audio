@@ -215,7 +215,6 @@ GlobalSteamAudioState *SteamAudioServer::get_global_state(bool should_init) {
 	IPLSceneSettings scene_cfg = create_scene_cfg(global_state.ctx);
 	IPLerror err = iplSceneCreate(global_state.ctx, &scene_cfg, &global_state.scene);
 	handleErr(err);
-	global_state.scene = iplSceneRetain(global_state.scene);
 	for (auto m : static_meshes_to_add) {
 		iplStaticMeshAdd(m, global_state.scene);
 	}
