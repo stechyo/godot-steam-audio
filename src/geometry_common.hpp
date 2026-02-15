@@ -63,6 +63,10 @@ inline IPLStaticMesh godot_mesh_to_ipl_mesh(Ref<Mesh> mesh, IPLScene scene, IPLM
 inline std::vector<IPLStaticMesh> create_meshes_from_mesh_inst_3d(MeshInstance3D *mesh_inst, IPLScene scene, Ref<SteamAudioMaterial> mat, bool ignore_trf = false) {
 	std::vector<IPLStaticMesh> p_meshes;
 	Ref<Mesh> mesh = mesh_inst->get_mesh();
+	if (mesh.is_null()) {
+		SteamAudio::log(SteamAudio::log_error, "MeshInstance3D has no mesh assigned.");
+		return p_meshes;
+	}
 
 	Transform3D trf;
 	if (ignore_trf) {
@@ -88,6 +92,10 @@ inline std::vector<IPLStaticMesh> create_meshes_from_mesh_inst_3d(MeshInstance3D
 
 inline std::vector<IPLStaticMesh> create_meshes_from_coll_inst_3d(CollisionShape3D *coll_inst, IPLScene scene, Ref<SteamAudioMaterial> mat, bool ignore_trf = false) {
 	std::vector<IPLStaticMesh> p_meshes;
+	if (coll_inst->get_shape().is_null()) {
+		SteamAudio::log(SteamAudio::log_error, "CollisionShape3D has no shape assigned.");
+		return p_meshes;
+	}
 	Transform3D trf;
 	if (ignore_trf) {
 		trf = Transform3D(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1), Vector3(0, 0, 0));
