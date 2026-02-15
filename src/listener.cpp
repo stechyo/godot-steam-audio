@@ -43,6 +43,11 @@ void SteamAudioListener::_notification(int p_what) {
 		case NOTIFICATION_ENTER_TREE:
 			ready_internal();
 			break;
+		case NOTIFICATION_EXIT_TREE:
+			if (!Engine::get_singleton()->is_editor_hint()) {
+				SteamAudioServer::get_singleton()->add_listener(nullptr);
+			}
+			break;
 	}
 }
 

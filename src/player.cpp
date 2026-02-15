@@ -178,6 +178,11 @@ void SteamAudioPlayer::_notification(int p_what) {
 		case NOTIFICATION_ENTER_TREE:
 			ready_internal();
 			break;
+		case NOTIFICATION_EXIT_TREE:
+			if (!Engine::get_singleton()->is_editor_hint() && is_local_state_init.load()) {
+				SteamAudioServer::get_singleton()->remove_local_state(&local_state);
+			}
+			break;
 		case NOTIFICATION_PROCESS:
 			process_internal(get_process_delta_time());
 			break;
