@@ -97,8 +97,6 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	is_local_state_init.store(false);
 	can_load_local_state.store(false);
 	SteamAudioServer::get_singleton()->remove_local_state(&local_state);
-
-	is_local_state_init.store(false);
 	auto gs = SteamAudioServer::get_singleton()->get_global_state();
 
 	iplSourceRemove(local_state.src.src, gs->sim);
