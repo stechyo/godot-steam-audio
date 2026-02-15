@@ -121,7 +121,7 @@ void SteamAudioDynamicGeometry::create_geometry() {
 }
 
 void SteamAudioDynamicGeometry::destroy_geometry() {
-	for (auto m : meshes) {
+	for (auto &m : meshes) {
 		iplStaticMeshRelease(&m);
 	}
 	meshes.clear();
