@@ -1,7 +1,11 @@
-#ifndef GDEXAMPLE_REGISTER_TYPES_H
-#define GDEXAMPLE_REGISTER_TYPES_H
+#ifndef STEAM_AUDIO_REGISTER_TYPES_H
+#define STEAM_AUDIO_REGISTER_TYPES_H
 
-void init_ext();
-void uninit_ext();
+#include <godot_cpp/godot.hpp>
 
-#endif // GDEXAMPLE_REGISTER_TYPES_H
+using namespace godot;
+
+void init_ext(ModuleInitializationLevel p_level);
+void uninit_ext(ModuleInitializationLevel p_level);
+
+#endif // STEAM_AUDIO_REGISTER_TYPES_H
