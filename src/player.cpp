@@ -102,6 +102,10 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	iplSourceRemove(local_state.src.src, gs->sim);
 	iplSourceRelease(&local_state.src.src);
 	iplDirectEffectRelease(&local_state.fx.direct);
+	iplReflectionEffectRelease(&local_state.fx.refl);
+	iplAmbisonicsDecodeEffectRelease(&local_state.fx.dec);
+	iplAmbisonicsDecodeEffectRelease(&local_state.fx.refl_dec);
+	iplAmbisonicsEncodeEffectRelease(&local_state.fx.enc);
 
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.in);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.direct);
