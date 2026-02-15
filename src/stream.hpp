@@ -29,7 +29,7 @@ public:
 	void set_stream(Ref<AudioStream> p_stream);
 	Ref<AudioStream> get_stream();
 
-	SteamAudioPlayer *parent;
+	SteamAudioPlayer *parent = nullptr;
 };
 
 class SteamAudioStreamPlayback : public AudioStreamPlayback {
@@ -40,7 +40,7 @@ private:
 	Ref<AudioStream> stream;
 	Ref<AudioStreamPlayback> stream_playback;
 
-	std::atomic<bool> is_active;
+	std::atomic<bool> is_active{false};
 
 protected:
 	static void _bind_methods();

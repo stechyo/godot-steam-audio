@@ -12,7 +12,7 @@ class SteamAudioDynamicGeometry : public Node3D {
 	GDCLASS(SteamAudioDynamicGeometry, Node3D);
 
 private:
-	std::atomic_bool is_init;
+	std::atomic_bool is_init{false};
 	IPLInstancedMesh mesh = nullptr;
 	IPLScene sub_scene = nullptr;
 	std::vector<IPLStaticMesh> meshes;
