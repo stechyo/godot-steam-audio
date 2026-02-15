@@ -224,11 +224,17 @@ void SteamAudioPlayer::ready_internal() {
 
 void SteamAudioPlayer::process_internal(double delta) {
 	if (get_panning_strength() > 0.0f) {
-		UtilityFunctions::push_warning("Panning strength is always zero on SteamAudioPlayer. You can control panning by enabling or disabling ambisonics.");
+		if (!has_warned_panning) {
+			UtilityFunctions::push_warning("Panning strength is always zero on SteamAudioPlayer. You can control panning by enabling or disabling ambisonics.");
+			has_warned_panning = true;
+		}
 		set_panning_strength(0.0f);
 	}
 	if (cfg.is_dist_attn_on && get_attenuation_model() != ATTENUATION_DISABLED) {
-		UtilityFunctions::push_warning("You cannot enable Godot's and SteamAudio's distance attenuation features at the same time. Disable SteamAudio's attenuation before adjusting Godot's.");
+		if (!has_warned_attenuation) {
+			UtilityFunctions::push_warning("You cannot enable Godot's and SteamAudio's distance attenuation features at the same time. Disable SteamAudio's attenuation before adjusting Godot's.");
+			has_warned_attenuation = true;
+		}
 		set_attenuation_model(ATTENUATION_DISABLED);
 	}
 
