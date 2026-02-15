@@ -141,6 +141,9 @@ inline void log_callback(IPLLogLevel level, const char *message) {
 		case IPL_LOGLEVEL_DEBUG:
 			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_debug;
 			break;
+		default:
+			godot_log_level = SteamAudio::GodotSteamAudioLogLevel::log_info;
+			break;
 	}
 	SteamAudio::log(godot_log_level, String(message).strip_edges().utf8().get_data());
 }
