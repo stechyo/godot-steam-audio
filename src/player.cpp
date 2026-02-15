@@ -284,7 +284,7 @@ Ref<AudioStreamPlayback> SteamAudioPlayer::get_inner_stream_playback() {
 	if (spb == nullptr) {
 		SteamAudio::log(SteamAudio::log_warn,
 				"Tried to get an inner stream playback from a SteamAudioPlayer, but its outer stream playback is not a SteamAudioStreamPlayback (or the player may not be playing audio). Returning null.");
-		Ref<AudioStream> null_pb;
+		Ref<AudioStreamPlayback> null_pb;
 		return null_pb;
 	}
 
