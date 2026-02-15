@@ -70,6 +70,11 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int
 	PackedVector2Array mixed_frames = stream_playback->mix_audio(rate_scale, frames);
 	frames = int(mixed_frames.size());
 
+	auto gs_local = SteamAudioServer::get_singleton()->get_global_state(false);
+	if (gs_local != nullptr && frames > gs_local->audio_cfg.frameSize) {
+		frames = gs_local->audio_cfg.frameSize;
+	}
+
 	for (int i = 0; i < frames; i++) {
 		ls->bufs.in.data[0][i] = mixed_frames[i].x;
 		ls->bufs.in.data[1][i] = mixed_frames[i].y;
