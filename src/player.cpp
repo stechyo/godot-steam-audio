@@ -134,7 +134,7 @@ void SteamAudioPlayer::init_local_state() {
 
 	IPLSourceSettings src_cfg{};
 	src_cfg.flags = static_cast<IPLSimulationFlags>(IPL_SIMULATIONFLAGS_DIRECT | IPL_SIMULATIONFLAGS_REFLECTIONS);
-	iplSourceCreate(gs->sim, &src_cfg, &local_state.src.src);
+	handleErr(iplSourceCreate(gs->sim, &src_cfg, &local_state.src.src));
 	iplSourceAdd(local_state.src.src, gs->sim);
 	iplSimulatorCommit(gs->sim);
 
@@ -143,13 +143,13 @@ void SteamAudioPlayer::init_local_state() {
 	// (e.g. one source may start to play audio from all sources and positioning gets screwed)
 	IPLDirectEffectSettings dir_effect_cfg;
 	dir_effect_cfg.numChannels = 2;
-	iplDirectEffectCreate(gs->ctx, &gs->audio_cfg, &dir_effect_cfg, &local_state.fx.direct);
+	handleErr(iplDirectEffectCreate(gs->ctx, &gs->audio_cfg, &dir_effect_cfg, &local_state.fx.direct));
 
 	IPLReflectionEffectSettings refl_effect_cfg{};
 	refl_effect_cfg.type = IPL_REFLECTIONEFFECTTYPE_CONVOLUTION;
 	refl_effect_cfg.irSize = int(SteamAudioConfig::max_refl_duration * float(gs->audio_cfg.samplingRate));
 	refl_effect_cfg.numChannels = ambisonic_channels_from(local_state.cfg.ambisonics_order);
-	iplReflectionEffectCreate(gs->ctx, &gs->audio_cfg, &refl_effect_cfg, &local_state.fx.refl);
+	handleErr(iplReflectionEffectCreate(gs->ctx, &gs->audio_cfg, &refl_effect_cfg, &local_state.fx.refl));
 
 	local_state.fx.dec = create_ambisonics_decode_effect(
 			gs->ctx, gs->audio_cfg, gs->hrtf);
@@ -158,13 +158,13 @@ void SteamAudioPlayer::init_local_state() {
 	local_state.fx.enc = create_ambisonics_encode_effect(
 			gs->ctx, gs->audio_cfg);
 
-	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.in);
-	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.direct);
-	iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.ambi);
-	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.out);
-	iplAudioBufferAllocate(gs->ctx, 1, gs->audio_cfg.frameSize, &local_state.bufs.mono);
-	iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.refl_ambi);
-	iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.refl_out);
+	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.in));
+	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.direct));
+	handleErr(iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.ambi));
+	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.out));
+	handleErr(iplAudioBufferAllocate(gs->ctx, 1, gs->audio_cfg.frameSize, &local_state.bufs.mono));
+	handleErr(iplAudioBufferAllocate(gs->ctx, ambisonic_channels_from(local_state.cfg.ambisonics_order), gs->audio_cfg.frameSize, &local_state.bufs.refl_ambi));
+	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.refl_out));
 	local_state.src.player = this;
 
 	SteamAudio::log(SteamAudio::log_debug, "init local state done");

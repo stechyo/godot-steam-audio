@@ -55,7 +55,7 @@ inline IPLStaticMesh godot_mesh_to_ipl_mesh(Ref<Mesh> mesh, IPLScene scene, IPLM
 	static_mesh_cfg.materials = mats;
 
 	IPLStaticMesh ipl_mesh;
-	iplStaticMeshCreate(scene, &static_mesh_cfg, &ipl_mesh);
+	handleErr(iplStaticMeshCreate(scene, &static_mesh_cfg, &ipl_mesh));
 
 	return ipl_mesh;
 }
