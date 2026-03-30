@@ -18,7 +18,8 @@ void SteamAudioServer::tick() {
 	if (!self->is_global_state_init.load()) {
 		return;
 	}
-	if (self->listener == nullptr) {
+	std::lock_guard<std::mutex> tick_lock(self->tick_mux);
+	if (self->listener == nullptr || !self->listener->is_inside_tree()) {
 		return;
 	}
 
@@ -34,9 +35,7 @@ void SteamAudioServer::tick() {
 			ipl_coords_from(self->listener->get_global_transform());
 
 	for (auto ls : self->local_states) {
-		if (ls->src.player == nullptr) {
-			UtilityFunctions::push_warning(
-					"local state has empty player, not updating simulation state");
+		if (ls->src.player == nullptr || !ls->src.player->is_inside_tree()) {
 			continue;
 		}
 		if (!ls->src.player->is_playing()) {
@@ -104,9 +103,7 @@ void SteamAudioServer::tick() {
 	SteamAudio::log(SteamAudio::log_debug, "tick: direct sim complete");
 
 	for (auto ls : self->local_states) {
-		if (ls->src.player == nullptr) {
-			UtilityFunctions::push_warning(
-					"local state has empty player, not updating simulation state");
+		if (ls->src.player == nullptr || !ls->src.player->is_inside_tree()) {
 			continue;
 		}
 		if (!ls->src.player->is_playing()) {
@@ -125,12 +122,13 @@ void SteamAudioServer::tick() {
 
 	global_state.refl_ir_lock.lock();
 	for (auto ls : local_states) {
-		if (ls->src.player == nullptr) {
-			UtilityFunctions::push_warning(
-					"local state has empty player, not updating simulation state");
+		if (ls->src.player == nullptr || !ls->src.player->is_inside_tree()) {
 			continue;
 		}
 		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+		if (listener == nullptr || !listener->is_inside_tree()) {
 			continue;
 		}
 
@@ -145,12 +143,13 @@ void SteamAudioServer::tick() {
 	global_state.refl_ir_lock.unlock();
 
 	for (auto ls : self->local_states) {
-		if (ls->src.player == nullptr) {
-			UtilityFunctions::push_warning(
-					"local state has empty player, not updating simulation state");
+		if (ls->src.player == nullptr || !ls->src.player->is_inside_tree()) {
 			continue;
 		}
 		if (!ls->src.player->is_playing()) {
+			continue;
+		}
+		if (listener == nullptr || !listener->is_inside_tree()) {
 			continue;
 		}
 		if (ls->src.player->get_global_position().distance_to(listener->get_global_position()) > ls->cfg.max_refl_dist) {
@@ -176,6 +175,9 @@ void SteamAudioServer::tick() {
 		iplSourceSetInputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &inputs);
 	}
 
+	if (listener == nullptr || !listener->is_inside_tree()) {
+		return;
+	}
 	shared_inputs = IPLSimulationSharedInputs{};
 	shared_inputs.listener = global_state.listener_coords;
 	shared_inputs.numRays = listener->get_num_refl_rays();
@@ -264,14 +266,17 @@ void SteamAudioServer::run_refl_sim() {
 }
 
 void SteamAudioServer::add_listener(SteamAudioListener *lis) {
+	std::lock_guard<std::mutex> lock(self->tick_mux);
 	self->listener = lis;
 }
 
 void SteamAudioServer::add_local_state(LocalSteamAudioState *ls) {
+	std::lock_guard<std::mutex> lock(self->tick_mux);
 	self->local_states.push_back(ls);
 }
 
 void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
+	std::lock_guard<std::mutex> lock(tick_mux);
 	auto it = std::find(local_states.begin(), local_states.end(), ls);
 	if (it == local_states.end()) {
 		return;

@@ -25,6 +25,7 @@ private:
 	std::atomic<bool> local_states_have_changed;
 	std::mutex init_mux;
 	std::mutex refl_mux;
+	std::mutex tick_mux;
 	std::condition_variable cv;
 
 	// meshes to add to the global state scene after it's initialized.
