@@ -8,6 +8,7 @@
 #include "godot_cpp/classes/capsule_shape3d.hpp"
 #include "godot_cpp/classes/collision_shape3d.hpp"
 #include "godot_cpp/classes/concave_polygon_shape3d.hpp"
+#include "godot_cpp/classes/convex_polygon_shape3d.hpp"
 #include "godot_cpp/classes/cylinder_mesh.hpp"
 #include "godot_cpp/classes/cylinder_shape3d.hpp"
 #include "godot_cpp/classes/mesh.hpp"
@@ -36,7 +37,7 @@ inline IPLStaticMesh godot_mesh_to_ipl_mesh(Ref<Mesh> mesh, IPLScene scene, IPLM
 
 	if (verts.is_empty() || tris.is_empty()) {
 		SteamAudio::log(SteamAudio::log_warn, "Mesh surface has no vertices or triangles, skipping.");
-		return IPLStaticMesh{nullptr};
+		return IPLStaticMesh{ nullptr };
 	}
 
 	std::vector<IPLVector3> ipl_verts(verts.size());
@@ -181,8 +182,35 @@ inline std::vector<IPLStaticMesh> create_meshes_from_coll_inst_3d(CollisionShape
 
 		arr_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_TRIANGLES, surface_array);
 		mesh = arr_mesh;
+	} else if (godot::Object::cast_to<godot::ConvexPolygonShape3D>(coll_inst->get_shape().ptr())) {
+		Ref<Mesh> debug_mesh = coll_inst->get_shape()->get_debug_mesh();
+		Ref<ArrayMesh> arr_mesh;
+		arr_mesh.instantiate();
+
+		for (int i = 0; i < debug_mesh->get_surface_count(); i++) {
+			Array surface_data = debug_mesh->surface_get_arrays(i);
+			PackedVector3Array vertices = surface_data[Mesh::ArrayType::ARRAY_VERTEX];
+			Array idx_array = surface_data[Mesh::ArrayType::ARRAY_INDEX];
+
+			if (idx_array.size() == 0 && vertices.size() >= 3) {
+				PackedInt32Array tris;
+				tris.resize(vertices.size());
+				for (int j = 0; j < vertices.size(); j++) {
+					tris[j] = j;
+				}
+
+				Array surface_array;
+				surface_array.resize(Mesh::ArrayType::ARRAY_MAX);
+				surface_array[Mesh::ArrayType::ARRAY_VERTEX] = vertices;
+				surface_array[Mesh::ArrayType::ARRAY_INDEX] = tris;
+				arr_mesh->add_surface_from_arrays(Mesh::PrimitiveType::PRIMITIVE_TRIANGLES, surface_array);
+			} else {
+				arr_mesh->add_surface_from_arrays(Mesh::PrimitiveType::PRIMITIVE_TRIANGLES, surface_data);
+			}
+		}
+		mesh = arr_mesh;
 	} else {
-		SteamAudio::log(SteamAudio::log_error, "SteamAudioGeometry supports sphere, box, cylinder, capsule and concave polygon shapes. Something else was provided, so this geometry will not do anything.");
+		SteamAudio::log(SteamAudio::log_error, "SteamAudioGeometry supports sphere, box, cylinder, capsule, concave polygon and convex polygon shapes. Something else was provided, so this geometry will not do anything.");
 		return p_meshes;
 	}
 
