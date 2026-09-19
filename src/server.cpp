@@ -214,9 +214,12 @@ void SteamAudioServer::tick() {
 			continue;
 		}
 
-		IPLSimulationOutputs outputs;
+		// Zero-initialised: iplSourceGetOutputs does not write every field (tanDevice among them), and
+		// iplReflectionEffectApply dereferences a non-null tanDevice -- stack garbage there crashed the mixer.
+		IPLSimulationOutputs outputs{};
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &outputs);
 		ls->refl_outputs = outputs.reflections;
+		ls->refl_outputs.tanDevice = nullptr; // convolution only; TrueAudio Next is not used
 	}
 	global_state.refl_ir_lock.unlock();
 
