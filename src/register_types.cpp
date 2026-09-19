@@ -14,6 +14,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -42,6 +43,15 @@ void init_ext(ModuleInitializationLevel p_level) {
 }
 
 void uninit_ext(ModuleInitializationLevel p_level) {
+	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+		int kept = SteamAudioStreamPlayback::drain(50);
+		if (kept > 0) {
+			UtilityFunctions::print("[godot-steam-audio] unload: kept ", kept, " playbacks alive past unload (freed with the process)");
+		}
+		if (srv != nullptr) {
+			srv->shutdown();
+		}
+	}
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
 		// Should call this to not leak, but thread->wait_for_finish() crashes...
 		// the program is exiting anyway so I'm not too concerned

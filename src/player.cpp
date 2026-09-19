@@ -85,6 +85,7 @@ void SteamAudioPlayer::_bind_methods() {
 }
 
 SteamAudioPlayer::SteamAudioPlayer() {
+	handle->player = this;
 	is_local_state_init.store(false);
 	can_load_local_state.store(true);
 
@@ -97,6 +98,7 @@ SteamAudioPlayer::SteamAudioPlayer() {
 		Ref<SteamAudioStream> new_stream;
 		new_stream.instantiate();
 		new_stream->parent = this;
+		new_stream->handle = handle;
 		if (get_stream().ptr() != nullptr) {
 			new_stream->set_stream(get_stream());
 		}
@@ -105,6 +107,12 @@ SteamAudioPlayer::SteamAudioPlayer() {
 }
 SteamAudioPlayer::~SteamAudioPlayer() {
 	SteamAudio::log(SteamAudio::log_debug, "destroying player");
+	{
+		// FIRST: no mix may touch this player again, and none is inside it now.
+		std::unique_lock hl(handle->mux);
+		handle->alive.store(false);
+		handle->player = nullptr;
+	}
 	if (!is_local_state_init.load()) {
 		return;
 	}
@@ -116,13 +124,14 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	SteamAudioServer::get_singleton()->remove_local_state(&local_state);
 	auto gs = SteamAudioServer::get_singleton()->get_global_state();
 
-	iplSourceRemove(local_state.src.src, gs->sim);
+	SteamAudioServer::get_singleton()->queue_source_remove(local_state.src.src);
 	iplSourceRelease(&local_state.src.src);
 	iplDirectEffectRelease(&local_state.fx.direct);
 	iplReflectionEffectRelease(&local_state.fx.refl);
 	iplAmbisonicsDecodeEffectRelease(&local_state.fx.dec);
 	iplAmbisonicsDecodeEffectRelease(&local_state.fx.refl_dec);
 	iplAmbisonicsEncodeEffectRelease(&local_state.fx.enc);
+	iplBinauralEffectRelease(&local_state.fx.bin);
 
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.in);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.direct);
@@ -132,17 +141,20 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_ambi);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.refl_out);
 
-	if (!pb.is_null()) {
-		auto playback = dynamic_cast<SteamAudioStreamPlayback *>(pb.ptr());
-		playback->parent = nullptr;
-	}
+	// (the playback's raw `parent` used to be cleared here through a stored Ref; the handle above does that job,
+	//  and releasing that Ref at shutdown freed a playback the AudioServer still held -- see player.hpp `pb`)
 }
 
-LocalSteamAudioState *SteamAudioPlayer::get_local_state() {
+LocalSteamAudioState *SteamAudioPlayer::get_local_state(bool may_init) {
 	if (!can_load_local_state.load()) {
 		return nullptr;
 	}
 	if (!is_local_state_init.load()) {
+		// Built on the MAIN thread only (process_internal / play_stream). The audio thread used to build it
+		// mid-mix, which is where the simulator race started.
+		if (!may_init) {
+			return nullptr;
+		}
 		init_local_state();
 	}
 	return &local_state;
@@ -156,8 +168,8 @@ void SteamAudioPlayer::init_local_state() {
 	IPLSourceSettings src_cfg{};
 	src_cfg.flags = static_cast<IPLSimulationFlags>(IPL_SIMULATIONFLAGS_DIRECT | IPL_SIMULATIONFLAGS_REFLECTIONS);
 	handleErr(iplSourceCreate(gs->sim, &src_cfg, &local_state.src.src));
-	iplSourceAdd(local_state.src.src, gs->sim);
-	iplSimulatorCommit(gs->sim);
+	// queued, not added here: see SteamAudioServer::apply_pending_ops
+	SteamAudioServer::get_singleton()->queue_source_add(local_state.src.src);
 
 	// TODO: check if we can't create effects globally and use their Reset functions.
 	// If we create these globally and use them for all sources, then strange things happen
@@ -178,6 +190,9 @@ void SteamAudioPlayer::init_local_state() {
 			gs->ctx, gs->audio_cfg, gs->hrtf);
 	local_state.fx.enc = create_ambisonics_encode_effect(
 			gs->ctx, gs->audio_cfg);
+	IPLBinauralEffectSettings bin_cfg{};
+	bin_cfg.hrtf = gs->hrtf;
+	handleErr(iplBinauralEffectCreate(gs->ctx, &gs->audio_cfg, &bin_cfg, &local_state.fx.bin));
 
 	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.in));
 	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.direct));
@@ -235,6 +250,7 @@ void SteamAudioPlayer::ready_internal() {
 		set_stream(new_stream);
 		str = new_stream.ptr();
 		str->parent = this;
+		str->handle = handle;
 		if (is_autoplay_enabled()) {
 			play();
 		}
@@ -265,7 +281,7 @@ void SteamAudioPlayer::process_internal(double delta) {
 	}
 
 	if (is_playing() && !get_stream_playback().is_null()) {
-		pb = get_stream_playback();
+		get_local_state(); // build it here, on the main thread, before the mixer ever needs it
 	}
 
 	// Sync cfg changes (e.g. runtime property toggles) into local_state.cfg.

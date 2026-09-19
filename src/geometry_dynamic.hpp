@@ -1,6 +1,7 @@
 #ifndef STEAM_AUDIO_DYNAMIC_GEOMETRY_H
 #define STEAM_AUDIO_DYNAMIC_GEOMETRY_H
 
+#include <vector>
 #include "godot_cpp/classes/node3d.hpp"
 #include "material.hpp"
 #include "phonon.h"
@@ -14,6 +15,8 @@ class SteamAudioDynamicGeometry : public Node3D {
 private:
 	std::atomic_bool is_init{false};
 	IPLInstancedMesh mesh = nullptr;
+	Transform3D last_trf;
+	bool has_last_trf = false;
 	IPLScene sub_scene = nullptr;
 	std::vector<IPLStaticMesh> meshes;
 

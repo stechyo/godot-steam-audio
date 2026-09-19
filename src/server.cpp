@@ -11,6 +11,74 @@
 #include <algorithm>
 #include <godot_cpp/variant/utility_functions.hpp>
 
+// Simulator race, caught under a debugger (project/race.gd): the AUDIO thread ran
+// init_local_state -> iplSourceAdd + iplSimulatorCommit while the MAIN thread destroyed another player's source and
+// the reflection thread ran iplSimulatorRunReflections -- SimulationManager::commit copied a list node already freed
+// (0xfeeefeee). Steam Audio forbids changing the source list or the scene while a simulation runs. So: every such
+// change is QUEUED (queue_op, which retains the handle) and APPLIED in tick() only when the simulator is idle
+// (a try_lock on sim_mux: a reflection pass in flight just defers them a frame, it never stalls the main thread);
+// runs hold sim_mux shared, so direct and reflection runs may still overlap as Steam Audio allows.
+void SteamAudioServer::queue_source_add(IPLSource src) {
+	std::lock_guard<std::mutex> q(queue_mux);
+	pending_ops.push_back({ PendingOp::SOURCE_ADD, iplSourceRetain(src) });
+}
+
+void SteamAudioServer::queue_source_remove(IPLSource src) {
+	std::lock_guard<std::mutex> q(queue_mux);
+	pending_ops.push_back({ PendingOp::SOURCE_REMOVE, iplSourceRetain(src) });
+}
+
+void SteamAudioServer::apply_pending_ops() {
+	std::vector<PendingOp> ops;
+	{
+		std::lock_guard<std::mutex> q(queue_mux);
+		ops.swap(pending_ops);
+	}
+	bool scene_changed = scene_dirty.exchange(false); // a dynamic mesh moved
+	if (ops.empty() && !scene_changed) {
+		return;
+	}
+	for (auto &op : ops) {
+		scene_changed = scene_changed || (op.kind != PendingOp::SOURCE_ADD && op.kind != PendingOp::SOURCE_REMOVE);
+		switch (op.kind) {
+			case PendingOp::SOURCE_ADD: {
+				auto s = static_cast<IPLSource>(op.handle);
+				iplSourceAdd(s, global_state.sim);
+				iplSourceRelease(&s);
+			} break;
+			case PendingOp::SOURCE_REMOVE: {
+				auto s = static_cast<IPLSource>(op.handle);
+				iplSourceRemove(s, global_state.sim);
+				iplSourceRelease(&s);
+			} break;
+			case PendingOp::STATIC_ADD: {
+				auto m = static_cast<IPLStaticMesh>(op.handle);
+				iplStaticMeshAdd(m, global_state.scene);
+				iplStaticMeshRelease(&m);
+			} break;
+			case PendingOp::STATIC_REMOVE: {
+				auto m = static_cast<IPLStaticMesh>(op.handle);
+				iplStaticMeshRemove(m, global_state.scene);
+				iplStaticMeshRelease(&m);
+			} break;
+			case PendingOp::INSTANCED_ADD: {
+				auto m = static_cast<IPLInstancedMesh>(op.handle);
+				iplInstancedMeshAdd(m, global_state.scene);
+				iplInstancedMeshRelease(&m);
+			} break;
+			case PendingOp::INSTANCED_REMOVE: {
+				auto m = static_cast<IPLInstancedMesh>(op.handle);
+				iplInstancedMeshRemove(m, global_state.scene);
+				iplInstancedMeshRelease(&m);
+			} break;
+		}
+	}
+	if (scene_changed) {
+		iplSceneCommit(global_state.scene); // only for mesh changes: it is the expensive one
+	}
+	iplSimulatorCommit(global_state.sim);
+}
+
 void SteamAudioServer::tick() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -25,9 +93,16 @@ void SteamAudioServer::tick() {
 
 	SteamAudio::log(SteamAudio::log_debug, "tick");
 
-	if (!is_refl_thread_processing.load()) {
-		iplSceneCommit(self->global_state.scene);
+	{
+		// Apply queued source/scene changes only while no simulation is running (never blocks).
+		std::unique_lock<std::shared_mutex> exclusive(self->sim_mux, std::try_to_lock);
+		// No unconditional iplSceneCommit here: it rebuilds the scene's acceleration structure every call, changed or
+		// not (~50 ms per frame on the main thread with ~800k triangles). apply_pending_ops commits what changed.
+		if (exclusive.owns_lock() && !is_refl_thread_processing.load()) {
+			self->apply_pending_ops();
+		}
 	}
+	std::shared_lock<std::shared_mutex> running(self->sim_mux);
 
 	SteamAudio::log(SteamAudio::log_debug, "tick: committed scene");
 
@@ -139,9 +214,12 @@ void SteamAudioServer::tick() {
 			continue;
 		}
 
-		IPLSimulationOutputs outputs;
+		// Zero-initialised: iplSourceGetOutputs does not write every field (tanDevice among them), and
+		// iplReflectionEffectApply dereferences a non-null tanDevice -- stack garbage there crashed the mixer.
+		IPLSimulationOutputs outputs{};
 		iplSourceGetOutputs(ls->src.src, IPL_SIMULATIONFLAGS_REFLECTIONS, &outputs);
 		ls->refl_outputs = outputs.reflections;
+		ls->refl_outputs.tanDevice = nullptr; // convolution only; TrueAudio Next is not used
 	}
 	global_state.refl_ir_lock.unlock();
 
@@ -258,7 +336,10 @@ void SteamAudioServer::run_refl_sim() {
 			continue;
 		}
 		SteamAudio::log(SteamAudio::log_debug, "running reflection sim");
-		iplSimulatorRunReflections(global_state.sim);
+		{
+			std::shared_lock<std::shared_mutex> running(sim_mux);
+			iplSimulatorRunReflections(global_state.sim);
+		}
 		is_refl_thread_processing.store(false);
 	}
 }
@@ -285,7 +366,8 @@ void SteamAudioServer::remove_local_state(LocalSteamAudioState *ls) {
 
 void SteamAudioServer::add_static_mesh(IPLStaticMesh mesh) {
 	if (is_global_state_init.load()) {
-		iplStaticMeshAdd(mesh, global_state.scene);
+		std::lock_guard<std::mutex> q(queue_mux);
+		pending_ops.push_back({ PendingOp::STATIC_ADD, iplStaticMeshRetain(mesh) });
 	} else {
 		static_meshes_to_add.push_back(mesh);
 	}
@@ -293,7 +375,8 @@ void SteamAudioServer::add_static_mesh(IPLStaticMesh mesh) {
 
 void SteamAudioServer::remove_static_mesh(IPLStaticMesh mesh) {
 	if (is_global_state_init.load()) {
-		iplStaticMeshRemove(mesh, global_state.scene);
+		std::lock_guard<std::mutex> q(queue_mux);
+		pending_ops.push_back({ PendingOp::STATIC_REMOVE, iplStaticMeshRetain(mesh) });
 	} else {
 		// Probably won't happen?
 		auto it = std::find(static_meshes_to_add.begin(), static_meshes_to_add.end(), mesh);
@@ -305,7 +388,8 @@ void SteamAudioServer::remove_static_mesh(IPLStaticMesh mesh) {
 
 void SteamAudioServer::add_dynamic_mesh(IPLInstancedMesh mesh) {
 	if (is_global_state_init.load()) {
-		iplInstancedMeshAdd(mesh, global_state.scene);
+		std::lock_guard<std::mutex> q(queue_mux);
+		pending_ops.push_back({ PendingOp::INSTANCED_ADD, iplInstancedMeshRetain(mesh) });
 	} else {
 		SteamAudio::log(SteamAudio::log_error, "Adding a dynamic mesh, but SteamAudio is not initialized. Probably crashing soon.");
 	}
@@ -316,7 +400,8 @@ void SteamAudioServer::remove_dynamic_mesh(IPLInstancedMesh mesh) {
 		return; // We've probably already deleted the scene.
 	}
 
-	iplInstancedMeshRemove(mesh, global_state.scene);
+	std::lock_guard<std::mutex> q(queue_mux);
+	pending_ops.push_back({ PendingOp::INSTANCED_REMOVE, iplInstancedMeshRetain(mesh) });
 }
 
 SteamAudioServer::SteamAudioServer() {
@@ -325,6 +410,18 @@ SteamAudioServer::SteamAudioServer() {
 	is_refl_thread_processing.store(false);
 	is_running.store(true);
 	local_states_have_changed.store(false);
+}
+
+void SteamAudioServer::shutdown() {
+	is_running.store(false);
+	{
+		std::unique_lock<std::mutex> lock(refl_mux);
+		cv.notify_one();
+	}
+	if (refl_thread.is_valid() && refl_thread->is_started()) {
+		refl_thread->wait_to_finish();
+	}
+	refl_thread.unref();
 }
 
 SteamAudioServer::~SteamAudioServer() {

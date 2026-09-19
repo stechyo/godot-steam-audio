@@ -4,6 +4,22 @@
 #include "godot_cpp/classes/audio_stream.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "steam_audio.hpp"
+#include <atomic>
+#include <memory>
+#include <shared_mutex>
+
+class SteamAudioPlayer;
+
+// The playback used to hold a RAW pointer to its player and the audio thread mixed through
+// it after the player was freed (use-after-free in SteamAudioStreamPlayback::_mix; reproduced by project/race.gd in
+// 18 s, caught under cdb reading 0xfeeefeee). The player and its playbacks now share this handle. The destructor
+// takes `mux` exclusively and clears `alive` BEFORE releasing anything, so it waits out any mix in progress and every
+// later mix returns silence. The handle's memory lives until the last holder lets go.
+struct SteamAudioPlayerHandle {
+	std::shared_mutex mux;
+	std::atomic<bool> alive{ true };
+	SteamAudioPlayer *player = nullptr;
+};
 #include <phonon.h>
 #include <godot_cpp/classes/audio_stream_player3d.hpp>
 
@@ -15,7 +31,9 @@ class SteamAudioPlayer : public AudioStreamPlayer3D {
 private:
 	// This ref is kept because at destruction we can't get the playback
 	// since the player has stopped (even though the playback still mixes...)
-	Ref<AudioStreamPlayback> pb;
+	// `Ref<AudioStreamPlayback> pb`, refreshed every frame from
+	// get_stream_playback(), is removed. At exit its release was the one that freed a playback the AudioServer still
+	// referenced (~SteamAudioPlayer -> Ref::unref -> ~SteamAudioStreamPlayback, then ~AudioServer unref'd freed memory).
 
 	// TODO: we can probably move these values inside local state
 	// for cleanup and the ability to adjust them at runtime
@@ -42,6 +60,11 @@ private:
 	};
 
 	LocalSteamAudioState local_state;
+
+public:
+	std::shared_ptr<SteamAudioPlayerHandle> handle = std::make_shared<SteamAudioPlayerHandle>();
+
+private:
 	std::atomic<bool> is_local_state_init;
 	std::atomic<bool> can_load_local_state;
 	std::atomic<bool> cfg_dirty{false};
@@ -60,7 +83,7 @@ public:
 	void process_internal(double delta);
 	void _notification(int p_what);
 
-	LocalSteamAudioState *get_local_state();
+	LocalSteamAudioState *get_local_state(bool may_init = true);
 
 	float get_occlusion_radius();
 	void set_occlusion_radius(float p_occlusion_radius);

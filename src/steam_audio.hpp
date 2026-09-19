@@ -71,6 +71,7 @@ struct SteamAudioEffects {
 	IPLAmbisonicsDecodeEffect dec;
 	IPLAmbisonicsDecodeEffect refl_dec;
 	IPLAmbisonicsEncodeEffect enc;
+	IPLBinauralEffect bin = nullptr; // direct sound: HRTF on the point source (reflections stay ambisonic)
 };
 
 struct LocalSteamAudioBuffers {
