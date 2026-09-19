@@ -1,6 +1,7 @@
 #ifndef STEAM_AUDIO_DYNAMIC_GEOMETRY_H
 #define STEAM_AUDIO_DYNAMIC_GEOMETRY_H
 
+#include <vector>
 #include "godot_cpp/classes/node3d.hpp"
 #include "material.hpp"
 #include "phonon.h"

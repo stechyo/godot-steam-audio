@@ -1,6 +1,7 @@
 #include "stream.hpp"
 #include "config.hpp"
 #include "godot_cpp/classes/engine.hpp"
+#include "godot_cpp/classes/os.hpp"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/packed_vector2_array.hpp"
 #include "server.hpp"
@@ -19,6 +20,7 @@ Ref<AudioStreamPlayback> SteamAudioStream::_instantiate_playback() const {
 	playback.instantiate();
 	playback->set_stream(stream);
 	playback->parent = parent;
+	playback->handle = handle;
 
 	return playback;
 }
@@ -29,15 +31,62 @@ Ref<AudioStream> SteamAudioStream::get_stream() { return this->stream; }
 // ----------------------------------------------------
 // SteamAudioStreamPlayback
 
-SteamAudioStreamPlayback::SteamAudioStreamPlayback() {}
-SteamAudioStreamPlayback::~SteamAudioStreamPlayback() {}
+std::mutex SteamAudioStreamPlayback::registry_mux;
+std::unordered_set<SteamAudioStreamPlayback *> SteamAudioStreamPlayback::registry;
+std::atomic<bool> SteamAudioStreamPlayback::shutting_down{ false };
+std::atomic<int> SteamAudioStreamPlayback::made{ 0 };
+std::atomic<int> SteamAudioStreamPlayback::destroyed{ 0 };
+
+SteamAudioStreamPlayback::SteamAudioStreamPlayback() {
+	made++;
+	std::lock_guard<std::mutex> g(registry_mux);
+	registry.insert(this);
+}
+SteamAudioStreamPlayback::~SteamAudioStreamPlayback() {
+	destroyed++;
+	std::lock_guard<std::mutex> g(registry_mux);
+	registry.erase(this);
+}
+
+int SteamAudioStreamPlayback::drain(int max_ms) {
+	// Called as this library unloads. Godot destroys its AudioServer AFTER unloading extensions, and the server still
+	// holds the last reference to playbacks it has retired but not yet freed (it frees them in its per-frame update,
+	// which no longer runs). Its final unref would run our destructor from unloaded code -- the exit crash, named with
+	// a symbol build of 4.7.2: Main::cleanup -> ~AudioServer -> _cleanup_lists -> Ref<AudioStreamPlayback>::unref.
+	// So: stop mixing, then take one reference on every playback still alive. Their memory is reclaimed by the OS a
+	// moment later with the process; nothing of ours runs after unload.
+	shutting_down.store(true);
+	OS::get_singleton()->delay_usec(uint32_t(max_ms) * 1000u); // let any mix in progress finish
+	std::lock_guard<std::mutex> g(registry_mux);
+	for (auto pb : registry) {
+		pb->reference();
+	}
+	return int(registry.size());
+}
 
 int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int32_t frames) {
-	if (parent == nullptr) {
+	// Hold the player alive for the whole mix, or do nothing (see SteamAudioPlayerHandle).
+	if (shutting_down.load()) {
 		return frames;
 	}
+	std::shared_ptr<SteamAudioPlayerHandle> h = handle;
+	if (!h) {
+		return frames;
+	}
+	std::shared_lock hl(h->mux);
+	if (!h->alive.load() || h->player == nullptr) {
+		return frames;
+	}
+	SteamAudioPlayer *parent = h->player;
 
-	if (stream_playback.is_null()) {
+	// Our own reference to the inner playback: play_stream may replace the member on the main thread mid-mix,
+	// and dropping the last reference to the one being mixed would free it under us.
+	Ref<AudioStreamPlayback> sp;
+	{
+		std::lock_guard sl(sp_mux);
+		sp = stream_playback;
+	}
+	if (sp.is_null()) {
 		return frames;
 	}
 
@@ -52,8 +101,8 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int
 
 	SteamAudio::log(SteamAudio::log_debug, "mixing");
 
-	LocalSteamAudioState *ls = parent->get_local_state();
-	if (ls == nullptr) { // probably being destroyed
+	LocalSteamAudioState *ls = parent->get_local_state(false);
+	if (ls == nullptr) { // not built yet (main thread builds it next frame) or being destroyed
 		return frames;
 	}
 	std::unique_lock lock(ls->mux);
@@ -62,12 +111,12 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int
 	if (parent == nullptr) {
 		return frames;
 	}
-	ls = parent->get_local_state();
+	ls = parent->get_local_state(false);
 	if (ls == nullptr || !ls->src.player) {
 		return frames;
 	}
 
-	PackedVector2Array mixed_frames = stream_playback->mix_audio(rate_scale, frames);
+	PackedVector2Array mixed_frames = sp->mix_audio(rate_scale, frames);
 	frames = int(mixed_frames.size());
 
 	auto gs_local = SteamAudioServer::get_singleton()->get_global_state(false);
@@ -175,9 +224,11 @@ int SteamAudioStreamPlayback::play_stream(const Ref<AudioStream> &p_stream, floa
 		return 0;
 	}
 
+	Ref<AudioStreamPlayback> fresh = p_stream->instantiate_playback();
+	fresh->start(p_from_offset);
+	std::lock_guard sl(sp_mux);
 	stream = p_stream;
-	stream_playback = stream->instantiate_playback();
-	stream_playback->start(p_from_offset);
+	stream_playback = fresh;
 
 	return 0;
 }
@@ -204,6 +255,6 @@ void SteamAudioStreamPlayback::_stop() {
 	stream_playback->stop();
 }
 
-bool SteamAudioStreamPlayback::_is_playing() const { return is_active; }
+bool SteamAudioStreamPlayback::_is_playing() const { return is_active && !shutting_down.load(); }
 void SteamAudioStreamPlayback::set_stream(Ref<AudioStream> p_stream) { stream = p_stream; }
 Ref<AudioStreamPlayback> SteamAudioStreamPlayback::get_stream_playback() { return this->stream_playback; }

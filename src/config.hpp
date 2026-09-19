@@ -1,6 +1,7 @@
 #ifndef STEAM_AUDIO_CONFIG_H
 #define STEAM_AUDIO_CONFIG_H
 
+#include <vector>
 #include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "phonon.h"

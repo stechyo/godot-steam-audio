@@ -1,6 +1,7 @@
 #ifndef STEAM_AUDIO_GEOMETRY_H
 #define STEAM_AUDIO_GEOMETRY_H
 
+#include <vector>
 #include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "material.hpp"

@@ -8,6 +8,9 @@
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/templates/safe_refcount.hpp>
+#include <atomic>
+#include <mutex>
+#include <unordered_set>
 
 using namespace godot;
 
@@ -30,6 +33,7 @@ public:
 	Ref<AudioStream> get_stream();
 
 	SteamAudioPlayer *parent = nullptr;
+	std::shared_ptr<SteamAudioPlayerHandle> handle;
 };
 
 class SteamAudioStreamPlayback : public AudioStreamPlayback {
@@ -41,6 +45,8 @@ private:
 	Ref<AudioStreamPlayback> stream_playback;
 
 	std::atomic<bool> is_active{false};
+	// guards `stream_playback` swaps against the audio thread (see _mix)
+	std::mutex sp_mux;
 
 protected:
 	static void _bind_methods();
@@ -48,6 +54,16 @@ protected:
 public:
 	SteamAudioStreamPlayback();
 	~SteamAudioStreamPlayback();
+
+	// Exit crash: at exit Godot mixed a SteamAudioStreamPlayback AFTER this library
+	// unloaded -- the call into the freed class table jumped to 0xfeeefeee (main thread, AudioServer::_mix_step).
+	// Every live playback is registered; on unload `drain` stops them all and waits for the mixer to let go.
+	static std::mutex registry_mux;
+	static std::unordered_set<SteamAudioStreamPlayback *> registry;
+	static std::atomic<bool> shutting_down;
+	static int drain(int max_ms);
+	static int live_count() { std::lock_guard<std::mutex> g(registry_mux); return int(registry.size()); }
+	static std::atomic<int> made, destroyed;
 
 	void set_stream(Ref<AudioStream> p_stream);
 	Ref<AudioStreamPlayback> get_stream_playback();
@@ -60,6 +76,7 @@ public:
 	bool _is_playing() const override;
 
 	SteamAudioPlayer *parent = nullptr;
+	std::shared_ptr<SteamAudioPlayerHandle> handle;
 };
 
 #endif
