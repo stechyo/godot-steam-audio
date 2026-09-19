@@ -15,6 +15,8 @@ class SteamAudioDynamicGeometry : public Node3D {
 private:
 	std::atomic_bool is_init{false};
 	IPLInstancedMesh mesh = nullptr;
+	Transform3D last_trf;
+	bool has_last_trf = false;
 	IPLScene sub_scene = nullptr;
 	std::vector<IPLStaticMesh> meshes;
 

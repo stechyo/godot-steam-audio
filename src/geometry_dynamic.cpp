@@ -65,6 +65,14 @@ void SteamAudioDynamicGeometry::process_internal(double delta) {
 		}
 	}
 
+	// Only a moved mesh needs a scene commit, and a commit is expensive.
+	Transform3D trf = get_global_transform();
+	if (has_last_trf && trf.is_equal_approx(last_trf)) {
+		return;
+	}
+	last_trf = trf;
+	has_last_trf = true;
+
 	auto orig = get_global_transform().origin;
 	auto right = get_global_transform().get_basis().get_column(0);
 	auto up = get_global_transform().get_basis().get_column(1);
@@ -79,8 +87,8 @@ void SteamAudioDynamicGeometry::process_internal(double delta) {
 		}
 	};
 
-	// TODO: check if it improves perf to skip this if the object does not move.
 	iplInstancedMeshUpdateTransform(mesh, SteamAudioServer::get_singleton()->get_global_state()->scene, new_trf);
+	SteamAudioServer::get_singleton()->scene_dirty.store(true);
 }
 
 Ref<SteamAudioMaterial> SteamAudioDynamicGeometry::get_material() { return mat; }

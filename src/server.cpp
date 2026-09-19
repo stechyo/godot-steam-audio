@@ -34,10 +34,12 @@ void SteamAudioServer::apply_pending_ops() {
 		std::lock_guard<std::mutex> q(queue_mux);
 		ops.swap(pending_ops);
 	}
-	if (ops.empty()) {
+	bool scene_changed = scene_dirty.exchange(false); // a dynamic mesh moved
+	if (ops.empty() && !scene_changed) {
 		return;
 	}
 	for (auto &op : ops) {
+		scene_changed = scene_changed || (op.kind != PendingOp::SOURCE_ADD && op.kind != PendingOp::SOURCE_REMOVE);
 		switch (op.kind) {
 			case PendingOp::SOURCE_ADD: {
 				auto s = static_cast<IPLSource>(op.handle);
@@ -71,7 +73,9 @@ void SteamAudioServer::apply_pending_ops() {
 			} break;
 		}
 	}
-	iplSceneCommit(global_state.scene);
+	if (scene_changed) {
+		iplSceneCommit(global_state.scene); // only for mesh changes: it is the expensive one
+	}
 	iplSimulatorCommit(global_state.sim);
 }
 
@@ -92,9 +96,10 @@ void SteamAudioServer::tick() {
 	{
 		// Apply queued source/scene changes only while no simulation is running (never blocks).
 		std::unique_lock<std::shared_mutex> exclusive(self->sim_mux, std::try_to_lock);
+		// No unconditional iplSceneCommit here: it rebuilds the scene's acceleration structure every call, changed or
+		// not (~50 ms per frame on the main thread with ~800k triangles). apply_pending_ops commits what changed.
 		if (exclusive.owns_lock() && !is_refl_thread_processing.load()) {
 			self->apply_pending_ops();
-			iplSceneCommit(self->global_state.scene);
 		}
 	}
 	std::shared_lock<std::shared_mutex> running(self->sim_mux);

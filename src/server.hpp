@@ -81,6 +81,7 @@ public:
 	std::shared_mutex sim_mux; // simulation runs: shared; source/scene changes: exclusive (tick only)
 	void queue_source_add(IPLSource src);
 	void queue_source_remove(IPLSource src);
+	std::atomic<bool> scene_dirty{ false }; // set when a dynamic mesh transform changes; the next idle tick commits
 };
 
 #endif // STEAM_AUDIO_SERVER_H
