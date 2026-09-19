@@ -173,7 +173,25 @@ int32_t SteamAudioStreamPlayback::_mix(AudioFrame *buffer, float rate_scale, int
 	dec_params.hrtf = gs->hrtf;
 	dec_params.binaural = IPL_TRUE;
 
-	if (ls->cfg.is_ambisonics_on) {
+	if (ls->cfg.is_ambisonics_on && ls->fx.bin != nullptr) {
+		// Direct sound through Steam Audio's binaural effect -- the HRTF applied to the point source, as the Steam
+		// Audio guide prescribes for direct paths. The plugin used to encode it into order-1 ambisonics and decode,
+		// which smears direction (measured: wide-band ILD +/-0.5 dB on speech vs a sharp HRTF). Ambisonics is kept
+		// for the reflections below, where a diffuse field is the point.
+		const IPLCoordinateSpace3 &lis = gs->listener_coords;
+		IPLVector3 src = { lis.origin.x + ls->dir_to_listener.x, lis.origin.y + ls->dir_to_listener.y, lis.origin.z + ls->dir_to_listener.z };
+		IPLBinauralEffectParams bin_params{};
+		bin_params.direction = ls->dir_to_listener.length_squared() < 1e-6f
+				? IPLVector3{ 0.0f, 0.0f, -1.0f } // on top of the listener: straight ahead, not a zero vector
+				: iplCalculateRelativeDirection(gs->ctx, src, lis.origin, lis.ahead, lis.up);
+		bin_params.interpolation = IPL_HRTFINTERPOLATION_BILINEAR;
+		bin_params.spatialBlend = 1.0f;
+		bin_params.hrtf = gs->hrtf;
+		bin_params.peakDelays = nullptr;
+		iplAudioBufferDownmix(gs->ctx, &ls->bufs.direct, &ls->bufs.mono);
+		iplBinauralEffectApply(ls->fx.bin, &bin_params, &ls->bufs.mono, &ls->bufs.out);
+		SteamAudio::log(SteamAudio::log_debug, "mixing: finished binaural");
+	} else if (ls->cfg.is_ambisonics_on) {
 		IPLAmbisonicsEncodeEffectParams enc_params{};
 		enc_params.direction = ipl_vec3_from(ls->dir_to_listener);
 		enc_params.order = ls->cfg.ambisonics_order;

@@ -131,6 +131,7 @@ SteamAudioPlayer::~SteamAudioPlayer() {
 	iplAmbisonicsDecodeEffectRelease(&local_state.fx.dec);
 	iplAmbisonicsDecodeEffectRelease(&local_state.fx.refl_dec);
 	iplAmbisonicsEncodeEffectRelease(&local_state.fx.enc);
+	iplBinauralEffectRelease(&local_state.fx.bin);
 
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.in);
 	iplAudioBufferFree(gs->ctx, &local_state.bufs.direct);
@@ -189,6 +190,9 @@ void SteamAudioPlayer::init_local_state() {
 			gs->ctx, gs->audio_cfg, gs->hrtf);
 	local_state.fx.enc = create_ambisonics_encode_effect(
 			gs->ctx, gs->audio_cfg);
+	IPLBinauralEffectSettings bin_cfg{};
+	bin_cfg.hrtf = gs->hrtf;
+	handleErr(iplBinauralEffectCreate(gs->ctx, &gs->audio_cfg, &bin_cfg, &local_state.fx.bin));
 
 	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.in));
 	handleErr(iplAudioBufferAllocate(gs->ctx, 2, gs->audio_cfg.frameSize, &local_state.bufs.direct));
